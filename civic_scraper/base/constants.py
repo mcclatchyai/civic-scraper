@@ -45,3 +45,6 @@ REQUEST_TIMEOUT = 30
 
 # Standard date format for all platforms
 DATE_FORMAT = "%Y-%m-%d"
+
+# Identifier for the scraper
+SCRAPED_BY = "civic-scraper"
