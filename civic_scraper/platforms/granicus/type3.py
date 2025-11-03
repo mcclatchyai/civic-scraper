@@ -22,7 +22,6 @@ class GranicusType3Scraper(GranicusBaseScraper):
         self, soup: BeautifulSoup, panel_name: str | None
     ) -> list[dict]:
         meetings = []
-<<<<<<< HEAD
         seen_keys: set[tuple] = set()  # (clip_id/date/name) to avoid duplicates
 
         # Helper regexes compiled once
@@ -99,9 +98,6 @@ class GranicusType3Scraper(GranicusBaseScraper):
             return clean_name(chosen, headers_tokens, date_str)
 
         
-=======
-
->>>>>>> master
         # Look for a main TabbedPanel structure for years.
         # Common IDs/classes: TabbedPanel1, TabbedPanels1, or just class TabbedPanels
         year_tab_panel_container = soup.find(
@@ -182,7 +178,6 @@ class GranicusType3Scraper(GranicusBaseScraper):
 
         for idx, content_section in enumerate(content_sections_to_parse):
             current_year_context = year_context_list[idx]
-<<<<<<< HEAD
             logger.info(f"{self.__class__.__name__}: Parsing section with year context: {current_year_context}")
 
             # DEBUG: Save first section's raw HTML snippet for manual inspection (first 1 only)
@@ -387,140 +382,6 @@ class GranicusType3Scraper(GranicusBaseScraper):
                     }
                     self._extract_links_from_row_links([a], meeting_data, [], [])
                     if meeting_data.get('agenda_url') or meeting_data.get('minutes_url') or meeting_data.get('video_url') or meeting_data.get('packet_url'):
-=======
-            logger.info(
-                f"{self.__class__.__name__}: Parsing section with year context: {current_year_context}"
-            )
-
-            # Find all listing tables within this section
-            tables_in_section = content_section.find_all("table", class_="listingTable")
-            if not tables_in_section:
-                # Fallback: some sites might use slightly different table classes or structures
-                tables_in_section = content_section.find_all(
-                    "table", id=re.compile(r"pastEvents|upcomingEvents", re.I)
-                )
-                if tables_in_section:
-                    logger.info(
-                        f"{self.__class__.__name__}: Found tables with IDs like pastEvents/upcomingEvents."
-                    )
-
-            if not tables_in_section:
-                logger.debug(
-                    f"{self.__class__.__name__}: No listingTable (or common alternatives) found in content section for year '{current_year_context}'."
-                )
-                continue
-
-            for table_num, table in enumerate(tables_in_section):
-                logger.info(
-                    f"{self.__class__.__name__}: Processing table {table_num + 1} in year '{current_year_context}'."
-                )
-                # Rows can have classes 'listingRow', 'listingRowAlt', or just be <tr> in <tbody>
-                # Also seen 'odd' and 'even' for row classes
-                rows = table.find_all(
-                    "tr", class_=re.compile(r"listingRow|listingRowAlt|even|odd", re.I)
-                )
-                if not rows:  # If no specific classes, try all <tr> within a <tbody>
-                    tbody = table.find("tbody")
-                    if tbody:
-                        rows = tbody.find_all("tr")
-                    else:  # Or all <tr> directly under the table if no tbody
-                        rows = table.find_all("tr")
-
-                if not rows:
-                    logger.debug(
-                        f"{self.__class__.__name__}: No processable rows found in table {table_num + 1} for year '{current_year_context}'."
-                    )
-                    continue
-
-                # Try to identify headers to map columns, if possible (more robust)
-                header_row = table.find(
-                    "tr", class_=re.compile(r"header|heading", re.I)
-                )  # Common header row classes
-                headers_text = []
-                if header_row:
-                    headers_text = [
-                        th.get_text(strip=True).lower()
-                        for th in header_row.find_all(["th", "td"])
-                    ]
-
-                for row_idx, row in enumerate(rows):
-                    if row == header_row:  # Skip header row if identified
-                        continue
-
-                    cells = row.find_all("td")
-                    if (
-                        not cells or len(cells) < 2
-                    ):  # Need at least name and date typically
-                        logger.debug(
-                            f"Skipping row {row_idx+1} in table {table_num+1} (year {current_year_context}): not enough cells."
-                        )
-                        continue
-
-                    meeting_data = {}
-
-                    # Try to map cells based on headers if available
-                    name_col_idx, date_col_idx = 0, 1  # Default column indices
-
-                    if headers_text:
-                        try:
-                            name_col_idx = (
-                                headers_text.index("name")
-                                if "name" in headers_text
-                                else 0
-                            )
-                            date_col_idx = (
-                                headers_text.index("date")
-                                if "date" in headers_text
-                                else 1
-                            )
-                        except ValueError:  # Header not found, stick to defaults
-                            pass
-
-                    meeting_data["name"] = (
-                        cells[name_col_idx]
-                        .get_text(separator=" ", strip=True)
-                        .replace("\xa0", " ")
-                    )
-                    meeting_data["date"] = (
-                        cells[date_col_idx].get_text(strip=True).replace("\xa0", " ")
-                    )
-
-                    # Meeting ID source
-                    meeting_id_source = ""
-                    all_links_in_row = row.find_all("a", href=True)
-                    for link_tag in all_links_in_row:
-                        href = link_tag["href"]
-                        id_match = re.search(
-                            r"[?&](?:clip_id|event_id|meeting_id|item_id)=(\d+)",
-                            href,
-                            re.IGNORECASE,
-                        )
-                        if id_match:
-                            meeting_id_source = id_match.group(1)
-                            break
-                    meeting_data["meeting_id_source"] = meeting_id_source
-
-                    # Links (Agenda, Minutes, Video, Packet) - search all links in the row
-                    self._extract_links_from_row_links(
-                        all_links_in_row, meeting_data, cells, headers_text
-                    )
-
-                    # Time (attempt extraction, base class _parse_date_time also tries this)
-                    if not meeting_data.get("time"):  # Only if not already parsed
-                        combined_text_for_time = (
-                            meeting_data.get("name", "")
-                            + " "
-                            + meeting_data.get("date", "")
-                        )
-                        time_match_row = re.search(
-                            r"(\d{1,2}:\d{2}\s*(?:AM|PM|am|pm)?)",
-                            combined_text_for_time,
-                        )
-                        if time_match_row:
-                            meeting_data["time"] = time_match_row.group(1)
-
-                    if meeting_data.get("name") and meeting_data.get("date"):
->>>>>>> master
                         meetings.append(meeting_data)
 
         logger.info(
