@@ -168,7 +168,6 @@ class GranicusType1Scraper(GranicusBaseScraper):
             return None
 
         meeting_data = {}
-<<<<<<< HEAD
         # Base extraction
         name_cell_text = cells[0].get_text(separator=' ', strip=True).replace('\xa0', ' ')
         date_cell_text = cells[1].get_text(strip=True).replace('\xa0', ' ')
@@ -193,15 +192,6 @@ class GranicusType1Scraper(GranicusBaseScraper):
         else:
             meeting_data['suspected_column_shift'] = False
         
-=======
-        # Name is usually in the first cell
-        meeting_data["name"] = (
-            cells[0].get_text(separator=" ", strip=True).replace("\xa0", " ")
-        )
-        # Date is usually in the second cell
-        meeting_data["date"] = cells[1].get_text(strip=True).replace("\xa0", " ")
-
->>>>>>> master
         # Try to get a source for meeting_id (e.g. clip_id, event_id)
         meeting_id_source = ""
         all_links_in_row = row_element.find_all("a", href=True)
@@ -218,7 +208,6 @@ class GranicusType1Scraper(GranicusBaseScraper):
 
         # Link extraction: Agenda, Minutes, Video, Packet
         # This needs to be flexible as column order and link text vary.
-<<<<<<< HEAD
         
         # Decide starting index for asset columns. If a shift is suspected, assets begin at cell 1.
         # Normal layout: [0]=Name, [1]=Date, [2]=Agenda, [3]=Minutes, [4]=Video, [5]=Packet
@@ -243,32 +232,6 @@ class GranicusType1Scraper(GranicusBaseScraper):
             minutes_link_tag = minutes_cell_content.find('a', href=True, text=re.compile(r'Minutes', re.I))
             if not minutes_link_tag:
                 minutes_link_tag = minutes_cell_content.find('a', href=True)
-=======
-
-        # Agenda (often in cell 2 or by text 'Agenda')
-        if len(cells) > 2:  # Cell index 2
-            agenda_cell_content = cells[2]
-            agenda_link_tag = agenda_cell_content.find(
-                "a", href=True, text=re.compile(r"Agenda", re.I)
-            )
-            if (
-                not agenda_link_tag
-            ):  # If no text match, assume link in cell 2 is agenda if it's a link
-                agenda_link_tag = agenda_cell_content.find("a", href=True)
-            if agenda_link_tag:
-                meeting_data["agenda_url"] = agenda_link_tag["href"]
-
-        # Minutes (often in cell 3 or by text 'Minutes')
-        if len(cells) > 3:  # Cell index 3
-            minutes_cell_content = cells[3]
-            minutes_link_tag = minutes_cell_content.find(
-                "a", href=True, text=re.compile(r"Minutes", re.I)
-            )
-            if (
-                not minutes_link_tag
-            ):  # If no text match, assume link in cell 3 is minutes if it's a link
-                minutes_link_tag = minutes_cell_content.find("a", href=True)
->>>>>>> master
             if minutes_link_tag:
                 meeting_data["minutes_url"] = minutes_link_tag["href"]
 

@@ -225,7 +225,6 @@ class GranicusSite(BaseSite):
                     except (AttributeError, ValueError):
                         pass
 
-<<<<<<< HEAD
             # Additional heuristic (NEW): Even if the ordering test above failed, attempt to classify
             # by inspecting each panel's content directly before giving up on structured detection.
             for panel in collapsible_panels:
@@ -262,24 +261,6 @@ class GranicusSite(BaseSite):
                 logger.info(f"  Found TabbedPanels: {main_tabbed_panels.get('id', 'no id')} class='{main_tabbed_panels.get('class', [])}'")
             if listing_tables_case:
                 logger.info(f"  Found {len(listing_tables_case)} listingTable(s)")
-=======
-        # Check for Type 3 structure (no CollapsiblePanelTab, TabbedPanels for years, direct listingTable)
-        main_tabbed_panels = soup.find("div", class_="TabbedPanels") or soup.find(
-            "div", id=re.compile(r"TabbedPanels?1", re.I)
-        )
-        listing_tables = soup.find_all("table", class_="listingTable")
-        if not collapsible_panels and (main_tabbed_panels or listing_tables):
-            logger.info(
-                "✓ DETECTED TYPE 3: No CollapsiblePanelTab structure, has TabbedPanels/listingTable"
-            )
-            logger.info("  Structure: TabbedPanels (years) → listingTable (direct)")
-            if main_tabbed_panels:
-                logger.info(
-                    f"  Found TabbedPanels: {main_tabbed_panels.get('id', 'no id')} class='{main_tabbed_panels.get('class', [])}'"
-                )
-            if listing_tables:
-                logger.info(f"  Found {len(listing_tables)} listingTable(s)")
->>>>>>> master
             return "GranicusType3Scraper"
 
         # Default fallback: try Type 1 first as it's most common
@@ -485,7 +466,6 @@ class GranicusSite(BaseSite):
         else:
             logger.info(f"No date filtering requested for site '{site_description}'.")
 
-<<<<<<< HEAD
         logger.info(f"Granicus scrape for site '{site_description}' (Committees: {self.committee_names}) finished. Returning {len(final_assets_to_return)} assets.")
         # Optional: Try all scrapers if we got zero assets (env-controlled)
         import os
@@ -520,9 +500,3 @@ class GranicusSite(BaseSite):
                     logger.info(f"[FALLBACK] {alt_name} produced 0 assets.")
             logger.info(f"Fallback process complete. Returning {len(final_assets_to_return)} assets after trying alternates.")
         return final_assets_to_return
-=======
-        logger.info(
-            f"Granicus scrape for site '{site_description}' (Committees: {self.committee_names}) finished. Returning {len(final_assets_to_return)} assets."
-        )
-        return final_assets_to_return
->>>>>>> master
