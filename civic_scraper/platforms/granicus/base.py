@@ -7,8 +7,7 @@ from datetime import datetime, time as dt_time  # Added dt_time for meeting_time
 from urllib.parse import (
     urljoin,
     urlparse,
-    quote_plus,
-)  # Added quote_plus for filename sanitization
+)
 import os
 from abc import ABC, abstractmethod
 import logging
@@ -35,20 +34,18 @@ except ImportError:
     @dataclass
     class Asset:  # Placeholder matching the fields from user's asset.py
         url: str
-        asset_name: str = None  # Title of an asset. Ex:  City Council Regular Meeting
-        committee_name: str = None
-        place: str = (
-            None  # Lowercase with spaces and punctuation removed. Ex: menlopark
-        )
-        place_name: str = None  # Human-readable place name. Ex: Menlo Park
-        state_or_province: str = None
-        asset_type: str = None  # Ex: agenda
-        meeting_date: datetime = None  # Date of meeting
-        meeting_time: dt_time = None  # Time of meeting
-        meeting_id: str = None  # Unique meeting ID
-        scraped_by: str = None
-        content_type: str = None
-        content_length: str = None
+        asset_name: Optional[str]  # Title of an asset. Ex:  City Council Regular Meeting
+        committee_name: Optional[str]
+        place: Optional[str]  # Lowercase with spaces and punctuation removed. Ex: menlopark
+        place_name: Optional[str]  # Human-readable place name. Ex: Menlo Park
+        state_or_province: Optional[str]
+        asset_type: Optional[str]  # Ex: agenda
+        meeting_date: Optional[str]  # Date of meeting
+        meeting_time: Optional[str]  # Time of meeting
+        meeting_id: Optional[str]  # Unique meeting ID
+        scraped_by: Optional[str]
+        content_type: Optional[str]
+        content_length: Optional[str]
 
     class AssetCollection(list):  # Placeholder now correctly inherits from list
         def __init__(self, *args):
@@ -216,7 +213,7 @@ class GranicusBaseScraper(ABC):
 
     def _parse_date_time_to_objects(
         self, date_str: Optional[str], time_str: Optional[str]
-    ) -> tuple[datetime | None, dt_time | None]:
+    ) -> tuple[Optional[datetime], Optional[dt_time]]:
         parsed_date_obj = None
         parsed_time_obj = None
 

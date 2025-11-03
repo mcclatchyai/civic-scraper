@@ -1,20 +1,14 @@
 import logging
-import os
 import sys
-from datetime import datetime  # For testing date filtering if added
 from civic_scraper.platforms.granicus.site import GranicusSite
-from civic_scraper.base.cache import Cache  # Assuming this is available
 from civic_scraper.base.asset import (
-    AssetCollection,
-    Asset,
+    AssetCollection
 )  # For type hinting and inspection
 from civic_scraper.platforms.granicus.site import (
     GranicusSite,
 )  # Tries to import from current dir
-from civic_scraper.base.cache import Cache
 from civic_scraper.base.asset import (
-    AssetCollection,
-    Asset,
+    AssetCollection
 )  # For type hinting and inspection
 
 

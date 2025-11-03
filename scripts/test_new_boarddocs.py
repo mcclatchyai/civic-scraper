@@ -8,9 +8,9 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')
 
 from civic_scraper.platforms.boarddocs.site import Site as BoardDocsSite  # noqa: E402
 
+
 # Custom JSON encoder to handle date, datetime, and time objects
 class DateTimeEncoder(json.JSONEncoder):
-
 
     def default(self, obj):
         if isinstance(obj, (datetime, date)):
