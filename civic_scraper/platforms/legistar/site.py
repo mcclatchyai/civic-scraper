@@ -24,10 +24,10 @@ class Site(base.Site):
     def __init__(
         self,
         url,
+        base_url,
         place=None,
         state_or_province=None,
         cache=None,
-        base_url,
         # Establish default keys described in the Legistar data table
         event_info_keys={
             "meeting_details_info": ["Meeting Details", "Agenda Materials"],
