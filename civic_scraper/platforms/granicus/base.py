@@ -12,6 +12,7 @@ from urllib.parse import (
 import os
 from abc import ABC, abstractmethod
 import logging
+from typing import Optional
 
 # Attempt to import from civic_scraper, with placeholders if not found (for standalone testing)
 try:
@@ -91,7 +92,7 @@ class GranicusBaseScraper(ABC):
     Abstract base class for scraping Granicus platforms.
     """
 
-    def __init__(self, cache: Cache | None = None):
+    def __init__(self, cache: Optional[Cache] = None):
         self.base_url = None
         self.cache = cache
 

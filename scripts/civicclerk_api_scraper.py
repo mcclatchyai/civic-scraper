@@ -14,6 +14,7 @@ SITES = [
 PAGE_SIZE = 20
 
 def get_api_base(site_url):
+
     # Handles both portal and non-portal civicclerk domains
     if ".portal." in site_url:
         domain = site_url.split(".portal.")[0].replace("https://", "")
@@ -22,6 +23,7 @@ def get_api_base(site_url):
     return f"https://{domain}.api.civicclerk.com/v1/Events"
 
 def fetch_all_events(api_base):
+
     all_events = []
     skip = 0
     while True:
@@ -42,14 +44,17 @@ def fetch_all_events(api_base):
     return all_events
 
 def standardise_asset_url(site_url, meeting_id, fileId):
+
     site_url = site_url.rstrip('/')
     return f"{site_url}/event/{meeting_id}/files/agenda/{fileId}"
 
 def standardise_meeting_url(site_url, meeting_id):
+
     site_url = site_url.rstrip('/')
     return f"{site_url}/event/{meeting_id}/overview"
 
 def extract_event_details(event, site_url):
+
     # Standardize meeting_date to YYYY-MM-DD HH:MM:SS (local time if needed, else UTC)
     meeting_date_raw = event.get("startDateTime")
     meeting_date = None
@@ -83,6 +88,7 @@ def extract_event_details(event, site_url):
     }
 
 if __name__ == "__main__":
+
     output_dir = "./Civic_Clerk_Json"
     os.makedirs(output_dir, exist_ok=True)
     for site in SITES:

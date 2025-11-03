@@ -1,11 +1,8 @@
 # load libraries for granicus-specific test
-from typing import Dict, List, Optional
-import json, os, logging
-from dataclasses import dataclass
-from civic_scraper.platforms import CivicPlusSite, LegistarSite, GranicusSite
+import json, logging
+from civic_scraper.platforms import GranicusSite
 from civic_scraper.base.cache import Cache
 from civic_scraper.base.asset import AssetCollection
-from civic_scraper.utils import parse_date
 from datetime import datetime
 
 # Configure logging to see scraper detection details
@@ -34,15 +31,15 @@ TEST_URLS = {
     },
     "type3": {
         "url": "https://sacramento.granicus.com/viewpublisher.php?view_id=22",
-        "panel": ["City Council"] # Type 3 is not expecting to give a panel, but can be used to filter results
+        "panel": ["City Council"]  # Type 3 is not expecting to give a panel, but can be used to filter results
     },
     "type3_alt": {
         "url": "https://rocklin-ca.granicus.com/ViewPublisher.php?view_id=1",
-        "panel": ["City Council"] # Type 3 is not expecting to give a panel, but can be used to filter results
+        "panel": ["City Council"]  # Type 3 is not expecting to give a panel, but can be used to filter results
     },
     "type3_new": {
         "url": "https://townofsurfsidefl.granicus.com/ViewPublisher.php?view_id=6",
-        "panel": ["Town Commission"] # Type 3 is not expecting to give a panel, but can be used to filter results
+        "panel": ["Town Commission"]  # Type 3 is not expecting to give a panel, but can be used to filter results
     },
     "type3_type5_fallback": {
         "url": "https://horrycounty.granicus.com/ViewPublisher.php?view_id=7",
@@ -75,29 +72,29 @@ committees = test_config["panel"]
 
 # Extract site details for configuration
 if "bradenton" in site_url:
-    place, state = "Bradenton", "FL"
+    place, state="Bradenton", "FL"
 elif "mooresvillenc" in site_url:
-    place, state = "Mooresville", "NC"
+    place, state="Mooresville", "NC"
 elif "sarasotacounty" in site_url:
-    place, state = "Sarasota", "FL"
+    place, state="Sarasota", "FL"
 elif "surfsidefl" in site_url:
-    place, state = "Surfside", "FL"
+    place, state="Surfside", "FL"
 elif "marysvilleca" in site_url:
-    place, state = "Marysville", "CA"
+    place, state="Marysville", "CA"
 elif "wake-forest" in site_url:
-    place, state = "Wake-forest", "NC"
+    place, state="Wake-forest", "NC"
 elif "sacramento" in site_url:
-    place, state = "Sacramento", "CA"
+    place, state="Sacramento", "CA"
 elif "rocklin" in site_url:
-    place, state = "Rocklin", "CA"
+    place, state="Rocklin", "CA"
 elif "coralsprings" in site_url:
-    place, state = "Coral Springs", "FL"
+    place, state="Coral Springs", "FL"
 elif "horrycounty" in site_url:
-    place, state = "Horry County", "SC"
+    place, state="Horry County", "SC"
 elif "pismobeach" in site_url:
-    place, state = "Pismo Beach", "FL"
+    place, state="Pismo Beach", "FL"
 else:
-    place, state = "Unknown", "Unknown"
+    place, state="Unknown", "Unknown"
 
 # Execute single site test
 print("="*60)
@@ -119,7 +116,7 @@ print("-"*60)
 output_filename = f"{place.lower().replace(' ', '_')}_{state.lower()}_{SELECTED_TEST}_assets_{datetime.now().strftime('%Y-%m-%d')}.json"
 assets_list = [asset.__dict__ for asset in assets]
 with open(output_filename, 'w') as f:
-    json.dump(assets_list, f, indent=2, default=str) # Added default=str to handle non-serializable types like datetime
+    json.dump(assets_list, f, indent=2, default=str)  # Added default=str to handle non-serializable types like datetime
 
 # Examine the results
 print(f"SCRAPING COMPLETE - Found {len(assets)} total assets")
@@ -145,5 +142,4 @@ print("\n" + "="*60)
 print("DETAILED ASSET INFORMATION:")
 print("="*60)
 
-  
 print(f"SUMMARY: Found {len(assets)} total assets across {len(assets_by_committee)} committees")

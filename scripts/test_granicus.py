@@ -6,7 +6,6 @@ import os
 import sys
 import logging
 import argparse
-import json
 import traceback
 
 # Configure logging
@@ -29,7 +28,6 @@ try:
     from civic_scraper.platforms.granicus.type3 import GranicusType3Scraper
     from civic_scraper.platforms.granicus.type4 import GranicusType4Scraper
     from civic_scraper.platforms.granicus.site import GranicusSite
-    from civic_scraper.base.asset import AssetCollection
     logger.info("Successfully imported Granicus scrapers")
 except ImportError as e:
     logger.error(f"Failed to import Granicus scrapers: {str(e)}")
@@ -59,14 +57,15 @@ TEST_URLS = {
 }
 
 def test_specific_scraper(scraper_type, url, panel_name):
+
     """
     Test a specific Granicus scraper type with a given URL and panel name.
-    
+
     Args:
         scraper_type: The scraper class to use
         url: The URL to scrape
         panel_name: The name of the panel/committee to scrape
-    
+
     Returns:
         bool: True if successful, False otherwise
     """
@@ -99,7 +98,7 @@ def test_specific_scraper(scraper_type, url, panel_name):
             logger.info(f"Successfully scraped {len(asset_collection)} assets.")
             logger.info("First few assets:")
             for i, asset in enumerate(asset_collection):
-                if i < 5: # Print details of first 5 assets
+                if i < 5:  # Print details of first 5 assets
                     logger.info(
                         f"  Asset {i+1}: Name='{asset.asset_name}', Date='{asset.meeting_date.strftime('%Y-%m-%d')}', "
                         f"Type='{asset.asset_type}', URL='{asset.url}', MeetingID='{asset.meeting_id}', "
@@ -107,9 +106,9 @@ def test_specific_scraper(scraper_type, url, panel_name):
                     )
                 else:
                     break
-        elif asset_collection is not None: # Empty collection
+        elif asset_collection is not None:  # Empty collection
             logger.info("Scrape completed, but no assets were found or processed.")
-        else: # Should not happen if extract_and_process_meetings returns None
+        else:  # Should not happen if extract_and_process_meetings returns None
             logger.error("extract_and_process_meetings method returned None, which is unexpected. Expected AssetCollection.")
 
         logger.info(f"--- Test for {url} (Panel: {panel_name}) finished ---")
@@ -120,13 +119,14 @@ def test_specific_scraper(scraper_type, url, panel_name):
         return False
 
 def test_scrape_granicus_platform(url, panel_name):
+
     """
     Test the main scrape_granicus_platform function with a given URL and panel name.
     
     Args:
         url: The URL to scrape
         panel_name: The name of the panel/committee to scrape
-    
+
     Returns:
         bool: True if successful, False otherwise
     """
@@ -134,16 +134,17 @@ def test_scrape_granicus_platform(url, panel_name):
     try:
         # Pass committee_names as a list to GranicusSite
         scraper = GranicusSite(url, committee_names=[panel_name] if panel_name else None)
-        
+
         logger.info(f"Successfully tested scrape_granicus_platform for {url}")
         return scraper.scrape() is not None
-    
+
     except Exception as e:
         logger.error(f"Error testing scrape_granicus_platform: {str(e)}")
         logger.debug(traceback.format_exc())
         return False
 
 def run_all_tests():
+
     """Run all scraper tests with their specific URLs."""
     results = {}
 
@@ -185,86 +186,89 @@ def run_all_tests():
     return all(results.values())
 
 def run_specific_test(scraper_type, url, panel_name=None):
+
     """
     Run a test for a specific scraper type and URL.
-    
+
     Args:
         scraper_type: The type of scraper to use (1, 2, 3, 4, or 'platform')
         url: The URL to scrape
         panel_name: The name of the panel/committee to scrape
-    
+
     Returns:
         bool: True if successful, False otherwise
     """
     if scraper_type == "platform":
         return test_scrape_granicus_platform(url, panel_name)
-    
+
     scraper_map = {
         "1": GranicusType1Scraper,
         "2": GranicusType2Scraper,
         "3": GranicusType3Scraper,
         "4": GranicusType4Scraper
     }
-    
+
     if scraper_type not in scraper_map:
         logger.error(f"Invalid scraper type: {scraper_type}")
         return False
-    
+
     return test_specific_scraper(scraper_map[scraper_type], url, panel_name)
 
 def parse_arguments():
+
     """Parse command line arguments."""
     parser = argparse.ArgumentParser(description="Test Granicus scrapers")
     parser.add_argument(
-        "--type", 
+        "--type",
         choices=["1", "2", "3", "4", "platform", "all"],
         default="all",
         help="Scraper type to test (1-4, platform, or all)"
     )
     parser.add_argument(
-        "--url", 
+        "--url",
         help="URL to scrape (required if type is not 'all')"
     )
     parser.add_argument(
-        "--panel", 
+        "--panel",
         help="Panel/committee name to scrape"
     )
     parser.add_argument(
-        "--debug", 
+        "--debug",
         action="store_true",
         help="Enable debug mode with verbose logging"
     )
-    
+
     args = parser.parse_args()
-    
+
     # Validate arguments
     if args.type != "all" and not args.url:
         parser.error("--url is required when --type is not 'all'")
-    
+
     return args
 
 if __name__ == "__main__":
+
     args = parse_arguments()
-    
+
     # Set logging level based on debug flag
     if args.debug:
         logging.getLogger().setLevel(logging.DEBUG)
         logger.setLevel(logging.DEBUG)
         logger.debug("Debug mode enabled")
-    
+
     # Print system information
     logger.info(f"Working directory: {os.getcwd()}")
     logger.info(f"Script location: {os.path.abspath(__file__)}")
-    
+
     # Create directories for output if they don't exist
     os.makedirs("scraped_data", exist_ok=True)
-    
+
     try:
         if args.type == "all":
             success = run_all_tests()
         else:
             success = run_specific_test(args.type, args.url, args.panel)
-        
+
         # Exit with appropriate status code
         sys.exit(0 if success else 1)
     except Exception as e:
@@ -272,4 +276,3 @@ if __name__ == "__main__":
         if args.debug:
             logger.error(traceback.format_exc())
         sys.exit(1)
-

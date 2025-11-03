@@ -1,7 +1,6 @@
 # load libraries for icompass-specific test
-from typing import Dict, List, Optional
-import json, os, logging
-from dataclasses import dataclass
+import json
+import logging
 from civic_scraper.platforms import ICompassSite
 from civic_scraper.base.cache import Cache
 from civic_scraper.base.asset import AssetCollection
@@ -42,15 +41,15 @@ committees = test_config["committee"]
 
 # Extract site details for configuration
 if "achdidaho" in site_url:
-    place, state = "Ada County Highway District", "ID"
+    place, state="Ada County Highway District", "ID"
 elif "newtonkansas" in site_url:
-    place, state = "Newton", "KS"
+    place, state="Newton", "KS"
 elif "harveycounty" in site_url:
-    place, state = "Harvey County", "KS"
+    place, state="Harvey County", "KS"
 elif "derby" in site_url:
-    place, state = "Derby", "KS"
+    place, state="Derby", "KS"
 else:
-    place, state = "Unknown", "Unknown"
+    place, state="Unknown", "Unknown"
 
 print("="*60)
 print("TESTING ICOMPASS SCRAPER WITH HTML STRUCTURE DETECTION")
