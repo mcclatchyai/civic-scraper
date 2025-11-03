@@ -1,6 +1,6 @@
 from bs4 import BeautifulSoup
 import requests
-from urllib.parse import urljoin, urlparse
+from urllib.parse import urljoin
 import json
 
 HEADERS = {
@@ -15,20 +15,22 @@ HEADERS = {
             "Connection": "keep-alive",
         }
 
-
-
 def read_website_html(url):
+
+
     response = requests.get(url, headers=HEADERS)
     if response.status_code == 200:
         return response.text
-    else:   
+    else:
         return None
 
 def get_div_by_class(html_code, class_name):
+
+
     soup = BeautifulSoup(html_code, 'html.parser')
     div_tag = soup.find('div', id=class_name)
     if div_tag:
-        #print(div_tag)
+        # print(div_tag)
         return str(div_tag)
     else:
         print("Returning None")
@@ -36,6 +38,8 @@ def get_div_by_class(html_code, class_name):
 
 
 def parse_meeting_rows(html, base_url):
+
+
     soup = BeautifulSoup(html, "html.parser")
     meetings = []
     for row in soup.select("tr.meeting-row"):
@@ -70,12 +74,12 @@ urls = [
 ]
 
 
-raw_html=read_website_html(urls[4])
+raw_html = read_website_html(urls[4])
 if raw_html is not None:
-    outer_html=get_div_by_class(raw_html,class_name="meetings-list")
+    outer_html = get_div_by_class(raw_html, class_name="meetings-list")
     print(outer_html)
     if outer_html is not None:
-        meeting_info=parse_meeting_rows(outer_html,base_url=urls[0])
+        meeting_info = parse_meeting_rows(outer_html, base_url=urls[0])
     else:
         print("something went wrong")
 
@@ -83,11 +87,3 @@ if raw_html is not None:
 
 else:
     print("something went wrong")
-
-
-
-
-
-
-
-

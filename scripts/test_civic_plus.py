@@ -11,13 +11,17 @@ from civic_scraper.platforms.civic_plus.site import Site as CivicPlusSite  # noq
 # Custom JSON encoder to handle datetime objects
 class DateTimeEncoder(json.JSONEncoder):
 
+
     def default(self, obj):
+
+
         if isinstance(obj, datetime):
             return obj.isoformat()
         return super().default(obj)
 
 # Example CivicPlus URL
 civic_plus_url = "http://nc-nashcounty.civicplus.com/AgendaCenter"
+
 
 # civic_plus_url = "https://www.collegetownship.org/AgendaCenter"
 

@@ -1,5 +1,6 @@
 # load libraries for granicus-specific test
-import json, logging
+import json
+import logging
 from civic_scraper.platforms import GranicusSite
 from civic_scraper.base.cache import Cache
 from civic_scraper.base.asset import AssetCollection
@@ -43,7 +44,7 @@ TEST_URLS = {
     },
     "type3_type5_fallback": {
         "url": "https://horrycounty.granicus.com/ViewPublisher.php?view_id=7",
-        "panel": ["County Council","Planning Commission","Public Safety Committee"],
+        "panel": ["County Council","Planning Commission","Public Safety Committee"]
     },
     "type4": {
         "url": "https://coralsprings.granicus.com/ViewPublisher.php?view_id=3",
@@ -72,29 +73,29 @@ committees = test_config["panel"]
 
 # Extract site details for configuration
 if "bradenton" in site_url:
-    place, state="Bradenton", "FL"
+    place, state = "Bradenton", "FL"
 elif "mooresvillenc" in site_url:
-    place, state="Mooresville", "NC"
+    place, state = "Mooresville", "NC"
 elif "sarasotacounty" in site_url:
-    place, state="Sarasota", "FL"
+    place, state = "Sarasota", "FL"
 elif "surfsidefl" in site_url:
-    place, state="Surfside", "FL"
+    place, state = "Surfside", "FL"
 elif "marysvilleca" in site_url:
-    place, state="Marysville", "CA"
+    place, state = "Marysville", "CA"
 elif "wake-forest" in site_url:
-    place, state="Wake-forest", "NC"
+    place, state = "Wake-forest", "NC"
 elif "sacramento" in site_url:
-    place, state="Sacramento", "CA"
+    place, state = "Sacramento", "CA"
 elif "rocklin" in site_url:
-    place, state="Rocklin", "CA"
+    place, state = "Rocklin", "CA"
 elif "coralsprings" in site_url:
-    place, state="Coral Springs", "FL"
+    place, state = "Coral Springs", "FL"
 elif "horrycounty" in site_url:
-    place, state="Horry County", "SC"
+    place, state = "Horry County", "SC"
 elif "pismobeach" in site_url:
-    place, state="Pismo Beach", "FL"
+    place, state = "Pismo Beach", "FL"
 else:
-    place, state="Unknown", "Unknown"
+    place, state = "Unknown", "Unknown"
 
 # Execute single site test
 print("="*60)
@@ -109,7 +110,7 @@ print("-"*60)
 site = GranicusSite(site_url, cache=Cache('/tmp/cache'), place=place, state_or_province=state, committee_names=committees)
 
 print("Starting scrape...")
-assets: AssetCollection = site.scrape(start_date = '2025-01-01')
+assets: AssetCollection=site.scrape(start_date = '2025-01-01')
 print("-"*60)
 
 # Save assets to JSON

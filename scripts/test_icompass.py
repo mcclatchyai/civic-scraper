@@ -41,15 +41,15 @@ committees = test_config["committee"]
 
 # Extract site details for configuration
 if "achdidaho" in site_url:
-    place, state="Ada County Highway District", "ID"
+    place, state = "Ada County Highway District", "ID"
 elif "newtonkansas" in site_url:
-    place, state="Newton", "KS"
+    place, state = "Newton", "KS"
 elif "harveycounty" in site_url:
-    place, state="Harvey County", "KS"
+    place, state = "Harvey County", "KS"
 elif "derby" in site_url:
-    place, state="Derby", "KS"
+    place, state = "Derby", "KS"
 else:
-    place, state="Unknown", "Unknown"
+    place, state = "Unknown", "Unknown"
 
 print("="*60)
 print("TESTING ICOMPASS SCRAPER WITH HTML STRUCTURE DETECTION")
@@ -63,7 +63,7 @@ print("-"*60)
 site = ICompassSite(site_url, cache=Cache('/tmp/cache'), place=place, state_or_province=state, committee_names=committees)
 
 print("Starting scrape...")
-assets: AssetCollection = site.scrape(start_date = '2024-01-01')
+assets: AssetCollection=site.scrape(start_date = '2024-01-01')
 print("-"*60)
 
 # Save assets to JSON

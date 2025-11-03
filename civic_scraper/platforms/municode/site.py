@@ -20,24 +20,18 @@ Only sites in the supported patterns list are officially tested and supported fo
 """
 import os
 import sys
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '..')))
 import datetime
 import logging
 import re
 import json
-from pathlib import Path
 from urllib.parse import urljoin, urlparse
 from bs4 import BeautifulSoup
 import requests
-import hashlib
 from dateutil import parser
-import civic_scraper
-from civic_scraper import base
-from civic_scraper.base.asset import Asset, AssetCollection
-from civic_scraper.base.cache import Cache
-from civic_scraper.utils import today_local_str
-
-
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '..')))
+import civic_scraper  # noqa: E402
+from civic_scraper import base  # noqa: E402
+from civic_scraper.base.cache import Cache  # noqa: E402
 
 logger = logging.getLogger(__name__)
 
@@ -52,8 +46,6 @@ HEADERS = {
             "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
             "Connection": "keep-alive",
         }
-
-
 
 class MunicodeSite(base.Site):
     def __init__(self, url, place=None, state_or_province=None, cache=Cache()):
@@ -79,20 +71,20 @@ class MunicodeSite(base.Site):
         except requests.RequestException as e:
             logger.error(f"Error fetching {url}: {e}")
             return None
-        
-    def get_particular_outer_html(self,html, class_name,uid):
+
+    def get_particular_outer_html(self, html, class_name, uid):
         soup = BeautifulSoup(html.text if hasattr(html, "text") else html, "html.parser")
         elements = soup.find_all(class_name, class_=uid)
-        
+
         if not elements:
             return None
 
         # Select the tag with the longest outer HTML
         largest = max(elements, key=lambda el: len(str(el)))
         return str(largest)
-    
-    def extract_meetings_from_html(self,html_content, base_url="https://www.cityofannamaria.com"):
-   
+
+    def extract_meetings_from_html(self, html_content, base_url="https://www.cityofannamaria.com"):
+
         soup = BeautifulSoup(html_content, "html.parser")
         results = []
 
@@ -114,14 +106,14 @@ class MunicodeSite(base.Site):
 
         return results
 
-    def extract_meetings_from_table2(self,html_content, base_url="https://www.staridaho.org"):
+    def extract_meetings_from_table2(self, html_content, base_url="https://www.staridaho.org"):
         """
         Extract structured meeting data from a table-based HTML content.
-        
+
         Args:
             html_content (str): HTML content with a table of meetings.
             base_url (str): To resolve relative links.
-        
+
         Returns:
             List of dictionaries with meeting info.
         """
@@ -151,8 +143,8 @@ class MunicodeSite(base.Site):
             results.append(meeting)
 
         return results
-    
-    def parse_meetings(self,html_content, base_url):
+
+    def parse_meetings(self, html_content, base_url):
         if not html_content:
             raise ValueError("HTML content is empty or None")
         soup = BeautifulSoup(html_content, "html.parser")
@@ -163,17 +155,18 @@ class MunicodeSite(base.Site):
             return self.extract_meetings_from_table2(html_content, base_url)
         else:
             raise ValueError("Unsupported HTML structure")
-        
-    def generate_meeting_id(self,scraper_type, subdomain,date=None):
+
+    def generate_meeting_id(self, scraper_type, subdomain, date=None):
         """meeting_id (str): Unique meeting ID. For example, cominbation of scraper type,
                 subdomain and numeric ID or date. Ex: civicplus-nc-nashcounty-05052020-382""""#load clients.py"
-        
+
         if date:
             return f"{scraper_type}-{subdomain}-{date}"
         else:
             raise ValueError("Either numeric_id or date must be provided to generate meeting ID")
- 
-    def append_assets(self,final_list, asset_type, urls, i_meeting, committee_name, place, place_name, state_or_province, meeting_date, meeting_time, meeting_id, scraped_by, content_type, content_length):
+
+    def append_assets(self, final_list, asset_type, urls, i_meeting, committee_name, place, place_name,
+                      state_or_province, meeting_date, meeting_time, meeting_id, scraped_by, content_type, content_length):
         for url in urls:
             final_list.append({
                 "url": url,
@@ -197,8 +190,8 @@ class MunicodeSite(base.Site):
             meeting_date = i_meeting.get("date_time")
             if meeting_date:
                 try:
-                    i_meeting["meeting_date"] = parser.parse(meeting_date.replace('|','').strip()).date()
-                    i_meeting["meeting_time"] = parser.parse(meeting_date.replace('|','').strip()).time()
+                    i_meeting["meeting_date"] = parser.parse(meeting_date.replace('|', '').strip()).date()
+                    i_meeting["meeting_time"] = parser.parse(meeting_date.replace('|', '').strip()).time()
                 except ValueError:
                     i_meeting["meeting_date"] = None
                     i_meeting["meeting_time"] = None
@@ -213,8 +206,8 @@ class MunicodeSite(base.Site):
             committee_name = i_meeting.get("title", "Unknown Committee")
             website_url = i_meeting.get("website_url", None)
             meeting_id = self.generate_meeting_id(scraper_type="civic-scraper",
-                                                subdomain=committee_name,
-                                                date=meeting_date)
+                                                  subdomain=committee_name,
+                                                  date=meeting_date)
             scraped_by = f"civic-scraper_{civic_scraper.__version__}"
             content_type = None
             content_length = None
@@ -236,88 +229,85 @@ class MunicodeSite(base.Site):
                 self.append_assets(final_meet_list, "details", [i_meeting.get("details_url")], i_meeting, committee_name, place, place_name, state_or_province, meeting_date, meeting_time, meeting_id, scraped_by, content_type, content_length)
         return final_meet_list
 
-    def fetch_meeting_data(self,url):
-            """Fetch and parse meeting data from a given Municode Meetings URL."""
-            logger.info(f"Fetching data from: {url}")
+    def fetch_meeting_data(self, url):
+        """Fetch and parse meeting data from a given Municode Meetings URL."""
+        logger.info(f"Fetching data from: {url}")
 
-            response=self.get_site_raw_data()
+        response = self.get_site_raw_data()
 
-            try:
-                
-                view_content = self.get_particular_outer_html(response, "div", "view-content")
-                if not view_content:
-                    logger.warning(f"No content with class 'view-content' found at {url}")
-                    return []
-                table_soup = BeautifulSoup(view_content, "html.parser")
-
-                meeting_info = []
-                for row in table_soup.find_all("tr"):
-                    temp = {}
-
-                    # Extract Date
-                    date_td = row.find("td", attrs={"data-th": "Date"})
-                    if date_td:
-                        span = date_td.find("span", class_="date-display-single")
-                        temp["date"] = span["content"] if span and span.has_attr("content") else date_td.get_text(strip=True)
-                        if isinstance(temp["date"],str):
-                            try:
-                                temp["date"] = parser.parse(temp["date"]).date()    
-                            except ValueError:
-                                logger.warning(f"Could not parse date: {temp['date']}")
-                    else:
-                        logger.warning(f"No 'Date' column found in row: {row}")
-                        continue
-                    # Extract Meeting Title
-                    meeting_td = row.find("td", attrs={"data-th": "Meeting"})
-                    if temp.get("date") < datetime.datetime.today().date():
-                        logger.warning(f"Skipping past meeting date: {temp['date']}")
-                        continue
-                    if meeting_td:
-                        temp["Meeting Title"] = meeting_td.get_text(strip=True)
-
-                    # Generate unique meeting_id
-                    print("Date:",temp.get("date", "")
-                          ,"sub-domain",urlparse(url).netloc.lower().replace(".", ""))
-                    temp["meeting_id"] = self.generate_meeting_id(scraper_type="civic-scraper",
-                                                                  subdomain= urlparse(url).netloc.lower().replace(".", ""),
-                                                                  date=temp.get("date", "") if temp.get("date") else None)
-                       
-
-
-                    # Agenda & Packet keys
-                    agenda_keys = ["Agenda", "Agendas"]
-                    packet_keys = ["Packet", "Packets", "Agenda Packets", "Agenda Packet"]
-
-                    # Agenda links
-                    temp["Agenda Links"] = []
-                    for key in agenda_keys:
-                        td = row.find("td", attrs={"data-th": key})
-                        if td:
-                            temp["Agenda Links"] = [a["href"] for a in td.find_all("a", href=True)]
-                            break
-
-                    # Packet links
-                    temp["Packet Links"] = []
-                    for key in packet_keys:
-                        td = row.find("td", attrs={"data-th": key})
-                        if td:
-                            temp["Packet Links"] = [a["href"] for a in td.find_all("a", href=True)]
-                            break
-                    # video links
-                    temp["video Links"] = []
-                    video_td = row.find("td", attrs={"data-th": "Video"})
-                    if video_td:
-                        temp["video Links"] = [a["href"] for a in video_td.find_all("a", href=True)]
-                    temp["website_url"] = url
-                    if temp:
-                        meeting_info.append(temp)
-
-                return meeting_info
-
-            except Exception as e:
-                logger.error(f"Error parsing HTML for {url}: {e}")
+        try:
+            view_content = self.get_particular_outer_html(response, "div", "view-content")
+            if not view_content:
+                logger.warning(f"No content with class 'view-content' found at {url}")
                 return []
-            
+            table_soup = BeautifulSoup(view_content, "html.parser")
+
+            meeting_info = []
+            for row in table_soup.find_all("tr"):
+                temp = {}
+
+                # Extract Date
+                date_td = row.find("td", attrs={"data-th": "Date"})
+                if date_td:
+                    span = date_td.find("span", class_="date-display-single")
+                    temp["date"] = span["content"] if span and span.has_attr("content") else date_td.get_text(strip=True)
+                    if isinstance(temp["date"], str):
+                        try:
+                            temp["date"] = parser.parse(temp["date"]).date()
+                        except ValueError:
+                            logger.warning(f"Could not parse date: {temp['date']}")
+                else:
+                    logger.warning(f"No 'Date' column found in row: {row}")
+                    continue
+                # Extract Meeting Title
+                meeting_td = row.find("td", attrs={"data-th": "Meeting"})
+                if temp.get("date") < datetime.datetime.today().date():
+                    logger.warning(f"Skipping past meeting date: {temp['date']}")
+                    continue
+                if meeting_td:
+                    temp["Meeting Title"] = meeting_td.get_text(strip=True)
+
+                # Generate unique meeting_id
+                print("Date:", temp.get("date", ""),
+                        "sub-domain", urlparse(url).netloc.lower().replace(".", ""))
+                temp["meeting_id"] = self.generate_meeting_id(scraper_type="civic-scraper",
+                                                                subdomain=urlparse(url).netloc.lower().replace(".", ""),
+                                                                date=temp.get("date", "") if temp.get("date") else None)
+
+                # Agenda & Packet keys
+                agenda_keys = ["Agenda", "Agendas"]
+                packet_keys = ["Packet", "Packets", "Agenda Packets", "Agenda Packet"]
+
+                # Agenda links
+                temp["Agenda Links"] = []
+                for key in agenda_keys:
+                    td = row.find("td", attrs={"data-th": key})
+                    if td:
+                        temp["Agenda Links"] = [a["href"] for a in td.find_all("a", href=True)]
+                        break
+
+                # Packet links
+                temp["Packet Links"] = []
+                for key in packet_keys:
+                    td = row.find("td", attrs={"data-th": key})
+                    if td:
+                        temp["Packet Links"] = [a["href"] for a in td.find_all("a", href=True)]
+                        break
+                # video links
+                temp["video Links"] = []
+                video_td = row.find("td", attrs={"data-th": "Video"})
+                if video_td:
+                    temp["video Links"] = [a["href"] for a in video_td.find_all("a", href=True)]
+                temp["website_url"] = url
+                if temp:
+                    meeting_info.append(temp)
+
+            return meeting_info
+
+        except Exception as e:
+            logger.error(f"Error parsing HTML for {url}: {e}")
+            return []
+
     def build_asset_data(self, meeting_info, place=None, state_or_province=None):
         """
         Build asset data from parsed meeting info.
@@ -344,7 +334,6 @@ class MunicodeSite(base.Site):
 
             scraped_by = f"civic-scraper_{civic_scraper.__version__}"
 
-            
             # adding meeting_info first
             assets.append({
                 "meeting_id": meeting_id,
@@ -370,7 +359,7 @@ class MunicodeSite(base.Site):
                     "scraped_by": scraped_by,
                     "url": url,
                 })
-                
+
             # Packet Links
             for url in row.get("Packet Links", []):
                 assets.append({
@@ -384,7 +373,7 @@ class MunicodeSite(base.Site):
                     "scraped_by": scraped_by,
                     "url": url,
                 })
-                
+
             # Video Links
             for url in row.get("video Links", []):
                 assets.append({
@@ -398,8 +387,6 @@ class MunicodeSite(base.Site):
                     "scraped_by": scraped_by,
                     "url": url,
                 })
-                
-            
         return assets
     
     def scrape(self, start_date=None, end_date=None):
@@ -422,9 +409,9 @@ class MunicodeSite(base.Site):
             print(f"Extracted {len(assets)} assets.")
             return assets
 
-
-
 def is_new_pattern_url(url):
+
+
     # Add all new-style domains here
     new_domains = [
         "cityofannamaria.com",
@@ -436,13 +423,15 @@ def is_new_pattern_url(url):
 
 
 if __name__ == "__main__":
+
+
     test_urls = [
         # Classic Municode Meetings
         "https://bluffton-sc.municodemeetings.com/",
-         #"https://tumwater-wa.municodemeetings.com/",
-        #"https://columbus-ga.municodemeetings.com/",
-        # # "https://hillsborough-nc.municodemeetings.com/",
-        # # New-style
+        # "https://tumwater-wa.municodemeetings.com/",
+        # "https://columbus-ga.municodemeetings.com/",
+        # "https://hillsborough-nc.municodemeetings.com/",
+        # New-style
         # "https://www.cityofannamaria.com/meetings?field_smart_date_value_1=2025-04-01&field_smart_date_end_value=2025-07-01&combine=&boards-commissions=All",
         # "https://www.staridaho.org/meetings?date_filter%255Bvalue%255D%255Bmonth%255D=1&date_filter%255Bvalue%255D%255Bday%255D=1&date_filter%255Bvalue%255D%255Byear%255D=2022&date_filter_1%255Bvalue%255D%255Bmonth%255D=12&date_filter_1%255Bvalue%255D%255Bday%255D=31&date_filter_1%255Bvalue%255D%255Byear%25=",
         "https://www.baystlouis-ms.gov/meetings?field_smart_date_value_1=2025-06-01&field_smart_date_end_value=&combine=&boards-commissions=All",
@@ -462,7 +451,7 @@ if __name__ == "__main__":
             meeting_data = site.normalize_output_format(meeting_data)
             print(f"Found {len(meeting_data)} meetings (new style).")
             for i in meeting_data:
-                    print("Asset:", json.dumps(i, indent=4, default=str))
+                print("Asset:", json.dumps(i, indent=4, default=str))
         else:
             # Use classic logic
             meeting_info = site.fetch_meeting_data(url)
@@ -472,6 +461,3 @@ if __name__ == "__main__":
             if assets:
                 for i in assets:
                     print("Asset:", json.dumps(i, indent=4, default=str))
-                
-
-

@@ -58,6 +58,7 @@ TEST_URLS = {
 
 def test_specific_scraper(scraper_type, url, panel_name):
 
+
     """
     Test a specific Granicus scraper type with a given URL and panel name.
 
@@ -120,9 +121,10 @@ def test_specific_scraper(scraper_type, url, panel_name):
 
 def test_scrape_granicus_platform(url, panel_name):
 
+
     """
     Test the main scrape_granicus_platform function with a given URL and panel name.
-    
+
     Args:
         url: The URL to scrape
         panel_name: The name of the panel/committee to scrape
@@ -144,6 +146,7 @@ def test_scrape_granicus_platform(url, panel_name):
         return False
 
 def run_all_tests():
+
 
     """Run all scraper tests with their specific URLs."""
     results = {}
@@ -187,6 +190,7 @@ def run_all_tests():
 
 def run_specific_test(scraper_type, url, panel_name=None):
 
+
     """
     Run a test for a specific scraper type and URL.
 
@@ -215,6 +219,7 @@ def run_specific_test(scraper_type, url, panel_name=None):
     return test_specific_scraper(scraper_map[scraper_type], url, panel_name)
 
 def parse_arguments():
+
 
     """Parse command line arguments."""
     parser = argparse.ArgumentParser(description="Test Granicus scrapers")
@@ -247,6 +252,7 @@ def parse_arguments():
     return args
 
 if __name__ == "__main__":
+
 
     args = parse_arguments()
 
