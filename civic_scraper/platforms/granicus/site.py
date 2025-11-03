@@ -115,30 +115,11 @@ class GranicusSite(BaseSite):
         self.committee_names = committee_names if committee_names is not None else []
         # Order can still be relevant if multiple scrapers of the same "category" (e.g. panel-specific) tie on asset count.
         self.scraper_instances_with_info = [
-<<<<<<< HEAD
             {"instance": GranicusType1Scraper(cache=self.cache), "name": "GranicusType1Scraper"},
             {"instance": GranicusType2Scraper(cache=self.cache), "name": "GranicusType2Scraper"},
             {"instance": GranicusType4Scraper(cache=self.cache), "name": "GranicusType4Scraper"},
             {"instance": GranicusType3Scraper(cache=self.cache), "name": "GranicusType3Scraper"}, # Type 3 is often general
             {"instance": GranicusType5Scraper(cache=self.cache), "name": "GranicusType5Scraper"}, # New Type 5 single-page tables
-=======
-            {
-                "instance": GranicusType1Scraper(cache=self.cache),
-                "name": "GranicusType1Scraper",
-            },
-            {
-                "instance": GranicusType2Scraper(cache=self.cache),
-                "name": "GranicusType2Scraper",
-            },
-            {
-                "instance": GranicusType4Scraper(cache=self.cache),
-                "name": "GranicusType4Scraper",
-            },
-            {
-                "instance": GranicusType3Scraper(cache=self.cache),
-                "name": "GranicusType3Scraper",
-            },  # Type 3 is often general
->>>>>>> master
         ]
 
     def _detect_scraper_type(self, html_content: str) -> str:
@@ -150,7 +131,6 @@ class GranicusSite(BaseSite):
         """
         from bs4 import BeautifulSoup
         import re
-<<<<<<< HEAD
         import os
         from pathlib import Path
         
@@ -165,11 +145,6 @@ class GranicusSite(BaseSite):
             logger.info(f"[DETECT] Count listingTable: {len(soup.find_all('table', class_='listingTable'))}")
             logger.info(f"[DETECT] Count responsive-table lists: {len(soup.find_all(['ol','ul'], class_='responsive-table'))}")
         
-=======
-
-        soup = BeautifulSoup(html_content, "html.parser")
-
->>>>>>> master
         # Check for CollapsiblePanelTab structure (Type 1, 2, 4)
         collapsible_panels = soup.find_all(
             "div", class_=["CollapsiblePanelTab", "CollapsiblePanelTabNotSelected"]
