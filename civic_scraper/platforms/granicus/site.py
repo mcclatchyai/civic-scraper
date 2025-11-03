@@ -1,5 +1,4 @@
 import logging
-import re
 from typing import Optional, List  # List for type hinting
 from datetime import datetime  # For date parsing if needed at this level
 

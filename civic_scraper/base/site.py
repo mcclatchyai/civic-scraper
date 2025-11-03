@@ -1,5 +1,5 @@
 import datetime
-from typing import Optional, List, Union, Dict, Any
+from typing import Optional, List
 from pathlib import Path
 
 from .asset import AssetCollection, Asset

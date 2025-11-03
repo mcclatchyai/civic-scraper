@@ -3,9 +3,7 @@ import civic_scraper
 from bs4 import BeautifulSoup
 from typing import Optional, List
 import requests
-import os
 from datetime import datetime
-import json
 import re
 from urllib.parse import urljoin
 
