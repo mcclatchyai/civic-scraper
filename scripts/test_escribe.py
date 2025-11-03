@@ -1,9 +1,6 @@
-import os
 import json
 import logging
 from datetime import datetime
-from typing import Dict, List, Optional
-from dataclasses import dataclass
 
 from civic_scraper.platforms.escribe.site import EscribeSite
 from civic_scraper.base.cache import Cache
@@ -41,8 +38,8 @@ TEST_URLS = {
 SELECTED_TEST = "site1"         # Options: site1, site2, site3, site4
 
 # Define the date range for scraping
-start_date='2024-11-01'
-end_date='2025-12-31'
+start_date = '2024-11-01'
+end_date = '2025-12-31'
 
 ############################################################################
 test_config = TEST_URLS[SELECTED_TEST]
