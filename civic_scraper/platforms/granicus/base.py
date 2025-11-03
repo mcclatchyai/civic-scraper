@@ -113,7 +113,7 @@ class GranicusBaseScraper(ABC):
         max_len = 100
         return sanitized_name[:max_len] + ".html"
 
-    def _fetch_html(self, url: str) -> str | None:
+    def _fetch_html(self, url: str) -> Optional[str]:
         """
         Fetches HTML content from a specified URL.
         If a Cache object with a 'write' method is provided, it saves the fetched HTML string.
@@ -175,7 +175,7 @@ class GranicusBaseScraper(ABC):
         except IOError as e:
             logger.error(f"Failed to save direct debug HTML: {e}")
 
-    def _make_absolute_url(self, link_url: str | None) -> str | None:
+    def _make_absolute_url(self, link_url: str ) -> Optional[str]:
         if not link_url or not self.base_url:
             return None
         if isinstance(link_url, str) and link_url.startswith(("http://", "https://")):
@@ -215,7 +215,7 @@ class GranicusBaseScraper(ABC):
         return name.lower()
 
     def _parse_date_time_to_objects(
-        self, date_str: str | None, time_str: str | None
+        self, date_str: Optional[str], time_str: Optional[str]
     ) -> tuple[datetime | None, dt_time | None]:
         parsed_date_obj = None
         parsed_time_obj = None
@@ -348,10 +348,10 @@ class GranicusBaseScraper(ABC):
         self,
         extracted_items: list[dict],
         site_url: str,
-        site_place: str | None,
-        site_state: str | None,
-        site_committee_name: str | None,
-        site_timezone: str | None,
+        site_place: Optional[str],
+        site_state: Optional[str],
+        site_committee_name: Optional[str],
+        site_timezone: Optional[str],
     ) -> AssetCollection:
         asset_collection = AssetCollection()
         site_identifier = (
@@ -467,7 +467,7 @@ class GranicusBaseScraper(ABC):
 
     @abstractmethod
     def _extract_meeting_details_internal(
-        self, soup: BeautifulSoup, panel_name: str | None
+        self, soup: BeautifulSoup, panel_name: Optional[str]
     ) -> list[dict]:
         pass
 
@@ -475,10 +475,10 @@ class GranicusBaseScraper(ABC):
         self,
         html_content: str,
         site_url: str,
-        site_place: str | None,
-        site_state: str | None,
-        site_committee_name: str | None,
-        site_timezone: str | None,
+        site_place: Optional[str],
+        site_state: Optional[str],
+        site_committee_name: Optional[str],
+        site_timezone: Optional[str],
     ) -> AssetCollection:
         self.base_url = site_url
         soup = BeautifulSoup(html_content, "html.parser")

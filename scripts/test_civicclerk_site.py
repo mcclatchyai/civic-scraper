@@ -6,6 +6,7 @@ import json
 @pytest.fixture
 def islamorada_api_response():
 
+
     # Load the provided JSON fixture from disk
     fixture_path = r".\civic-scraper\tests\fixtures\scraped_events_api_Islamorada_fl.json"
     with open(fixture_path, encoding='utf-8') as f:
@@ -15,11 +16,13 @@ def islamorada_api_response():
 
 class DummyCivicClerkSite(CivicClerkSite):
 
+
     def fetch_all_events(self, start_date=None, end_date=None):
         # Override to return fixture data instead of making real API calls
         return self._test_events
 
 def test_extract_place_and_state_from_url():
+
 
     cases = [
         ("https://turlockca.portal.civicclerk.com", ("turlock", "ca")),
@@ -31,6 +34,7 @@ def test_extract_place_and_state_from_url():
         assert extract_place_and_state_from_url(url) == expected
 
 def test_scrape_returns_assetcollection(islamorada_api_response):
+
 
     site = DummyCivicClerkSite(
         url="https://islamoradafl.portal.civicclerk.com/"
@@ -57,6 +61,7 @@ def test_scrape_returns_assetcollection(islamorada_api_response):
 
 def test_scrape_empty():
 
+
     site = DummyCivicClerkSite(
         url="https://islamoradafl.portal.civicclerk.com/"
     )
@@ -68,6 +73,7 @@ def test_scrape_empty():
 
 def test_asset_url_and_meeting_url_methods():
 
+
     site = CivicClerkSite(url="https://islamoradafl.portal.civicclerk.com/")
     asset_url = site.standardise_asset_url("12345", 99)
     meeting_url = site.standardise_meeting_url("12345")
@@ -75,6 +81,7 @@ def test_asset_url_and_meeting_url_methods():
     assert meeting_url.endswith("/event/12345/overview")
 
 def test_fetch_and_scrape_real_data():
+
 
     """
     Integration test: Fetch real data from the actual CivicClerk API and display first 5 assets (with key info).
