@@ -15,18 +15,16 @@ HEADERS = {
             "Connection": "keep-alive",
         }
 
+
 def read_website_html(url):
-
-
     response = requests.get(url, headers=HEADERS)
     if response.status_code == 200:
         return response.text
     else:
         return None
 
+
 def get_div_by_class(html_code, class_name):
-
-
     soup = BeautifulSoup(html_code, 'html.parser')
     div_tag = soup.find('div', id=class_name)
     if div_tag:
@@ -38,8 +36,6 @@ def get_div_by_class(html_code, class_name):
 
 
 def parse_meeting_rows(html, base_url):
-
-
     soup = BeautifulSoup(html, "html.parser")
     meetings = []
     for row in soup.select("tr.meeting-row"):
@@ -63,6 +59,7 @@ def parse_meeting_rows(html, base_url):
 
         meetings.append(meeting)
     return meetings
+
 
 urls = [
     "https://agendaonline.mymanatee.org/OnBaseAgendaOnline/Meetings/Search?dropid=11&mtids=107&dropsv=01%2F01%2F2021%2000%3A00%3A00&dropev=01%2F01%2F2040%2000%3A00%3A00",

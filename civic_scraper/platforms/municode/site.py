@@ -47,6 +47,7 @@ HEADERS = {
             "Connection": "keep-alive",
         }
 
+
 class MunicodeSite(base.Site):
     def __init__(self, url, place=None, state_or_province=None, cache=Cache()):
         self.url = url
@@ -269,10 +270,10 @@ class MunicodeSite(base.Site):
 
                 # Generate unique meeting_id
                 print("Date:", temp.get("date", ""),
-                        "sub-domain", urlparse(url).netloc.lower().replace(".", ""))
+                      "sub-domain", urlparse(url).netloc.lower().replace(".", ""))
                 temp["meeting_id"] = self.generate_meeting_id(scraper_type="civic-scraper",
-                                                                subdomain=urlparse(url).netloc.lower().replace(".", ""),
-                                                                date=temp.get("date", "") if temp.get("date") else None)
+                                                              subdomain=urlparse(url).netloc.lower().replace(".", ""),
+                                                              date=temp.get("date", "") if temp.get("date") else None)
 
                 # Agenda & Packet keys
                 agenda_keys = ["Agenda", "Agendas"]
@@ -388,7 +389,7 @@ class MunicodeSite(base.Site):
                     "url": url,
                 })
         return assets
-    
+
     def scrape(self, start_date=None, end_date=None):
         if is_new_pattern_url(url):
             # Use new logic
@@ -409,9 +410,8 @@ class MunicodeSite(base.Site):
             print(f"Extracted {len(assets)} assets.")
             return assets
 
+
 def is_new_pattern_url(url):
-
-
     # Add all new-style domains here
     new_domains = [
         "cityofannamaria.com",
@@ -423,8 +423,6 @@ def is_new_pattern_url(url):
 
 
 if __name__ == "__main__":
-
-
     test_urls = [
         # Classic Municode Meetings
         "https://bluffton-sc.municodemeetings.com/",

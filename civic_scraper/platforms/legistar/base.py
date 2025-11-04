@@ -1,12 +1,10 @@
 import datetime
 import itertools
 import traceback
-from collections import defaultdict, deque
+from collections import defaultdict
 import re
 import requests
 import json
-import logging
-
 import scrapelib
 import lxml.html
 import lxml.etree as etree

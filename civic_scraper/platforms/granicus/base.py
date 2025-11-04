@@ -172,7 +172,7 @@ class GranicusBaseScraper(ABC):
         except IOError as e:
             logger.error(f"Failed to save direct debug HTML: {e}")
 
-    def _make_absolute_url(self, link_url: str ) -> Optional[str]:
+    def _make_absolute_url(self, link_url: str) -> Optional[str]:
         if not link_url or not self.base_url:
             return None
         if isinstance(link_url, str) and link_url.startswith(("http://", "https://")):

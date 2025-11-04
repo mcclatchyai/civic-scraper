@@ -8,7 +8,6 @@ from bs4 import BeautifulSoup
 from typing import List, Dict, Any, Optional
 from datetime import datetime
 import logging
-import warnings
 
 from civic_scraper.base.site import Site as BaseSite
 from civic_scraper.platforms.boarddocs.parser import BoardDocsParser

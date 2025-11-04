@@ -1,7 +1,6 @@
 import datetime
 import logging
 import re
-from pathlib import Path
 from urllib.parse import urljoin, urlparse
 import warnings
 
@@ -10,7 +9,6 @@ import requests
 import civic_scraper
 from civic_scraper import base
 from civic_scraper.base.asset import Asset, AssetCollection
-from civic_scraper.base.cache import Cache
 from civic_scraper.utils import today_local_str
 
 from .parser import Parser

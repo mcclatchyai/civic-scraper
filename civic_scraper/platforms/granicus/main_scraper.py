@@ -99,11 +99,11 @@ if __name__ == "__main__":
     # --- To run all tests: ---
     all_results = {}
     for test_case in test_configurations:
-        logger.info(f"\n===================================================")
+        logger.info("\n===================================================")
         logger.info(f"RUNNING TEST: {test_case['comment']}")
         assets = run_granicus_test_scrape(test_case["url"], test_case.get("panel"))
         all_results[test_case["comment"]] = assets
-        logger.info(f"===================================================\n")
+        logger.info("===================================================\n")
 
     # --- Example of how to run a single selected test: ---
     # selected_test = test_configurations[0] # Choose a test
