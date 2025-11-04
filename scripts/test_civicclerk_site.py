@@ -4,9 +4,9 @@ from civic_scraper.base.asset import AssetCollection
 import json
 
 @pytest.fixture
+
+
 def islamorada_api_response():
-
-
     # Load the provided JSON fixture from disk
     fixture_path = r".\civic-scraper\tests\fixtures\scraped_events_api_Islamorada_fl.json"
     with open(fixture_path, encoding='utf-8') as f:
@@ -16,8 +16,6 @@ def islamorada_api_response():
 
 
 class DummyCivicClerkSite(CivicClerkSite):
-
-
     def fetch_all_events(self, start_date=None, end_date=None):
         # Override to return fixture data instead of making real API calls
         return self._test_events

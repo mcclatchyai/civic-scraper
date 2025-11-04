@@ -1,5 +1,6 @@
 import logging
 import sys
+from typing import Optional
 from civic_scraper.platforms.granicus.site import GranicusSite
 from civic_scraper.base.asset import (
     AssetCollection
@@ -22,7 +23,7 @@ logger = logging.getLogger(__name__)
 
 
 def run_granicus_test_scrape(
-    url: str, panel_name: str | None = None, site_name_override: str | None = None
+    url: str, panel_name: Optional[str] = None, site_name_override: Optional[str] = None
 ):
     """
     Tests the GranicusSite scraper for a given URL and panel.
