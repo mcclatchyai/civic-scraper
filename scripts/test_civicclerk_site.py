@@ -3,9 +3,8 @@ from civic_scraper.platforms.civic_clerk.site import CivicClerkSite, extract_pla
 from civic_scraper.base.asset import AssetCollection
 import json
 
+
 @pytest.fixture
-
-
 def islamorada_api_response():
     # Load the provided JSON fixture from disk
     fixture_path = r".\civic-scraper\tests\fixtures\scraped_events_api_Islamorada_fl.json"

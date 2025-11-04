@@ -51,7 +51,7 @@ class Site(base.Site):
             place = kwargs.pop("place_name")
 
         # Extract state and subdomain from URL
-        subdomain = urlparse(url).netloc.split(".")[0]
+        # subdomain = urlparse(url).netloc.split(".")[0]
         extracted_state = self._get_asset_metadata(r"(?<=//)\w{2}(?=-)", url)
         extracted_place = self._get_asset_metadata(r"(?<=-)\w+(?=\.)", url)
 

@@ -5,12 +5,6 @@ from civic_scraper.platforms.granicus.site import GranicusSite
 from civic_scraper.base.asset import (
     AssetCollection
 )  # For type hinting and inspection
-from civic_scraper.platforms.granicus.site import (
-    GranicusSite,
-)  # Tries to import from current dir
-from civic_scraper.base.asset import (
-    AssetCollection
-)  # For type hinting and inspection
 
 
 # Configure logging for the application
