@@ -10,7 +10,7 @@ or another platform's site class as needed.
 
 from civic_scraper.base.cache import Cache
 from civic_scraper.base.asset import Asset, AssetCollection
-from civic_scraper.platforms.scraper.site import Scraper
+# from civic_scraper.platforms.scraper.site import Scraper
 import pytest
 from dataclasses import dataclass
 from typing import List, Optional

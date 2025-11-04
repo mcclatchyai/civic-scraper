@@ -41,7 +41,7 @@ print("-"*60)
 site = OnBaseSite(site_url, cache=Cache('/tmp/cache'), place=place, state_or_province=state)
 
 print("Starting scrape...")
-assets: AssetCollection = site.scrape(start_date=start_date, end_date=end_date)
+assets: AssetCollection = site.scrape()  # site.scrape(start_date=start_date, end_date=end_date)
 print("-"*60)
 
 # Save assets to JSON

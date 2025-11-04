@@ -1,4 +1,4 @@
-from collections import deque
+# from collections import deque
 import esprima
 
 from .base import LegistarScraper  # Use local import to avoid stale dependencies
@@ -112,7 +112,7 @@ class LegistarEventsScraper(LegistarScraper):
                     elif self.event_info_key not in event:
                         print("No valid meeting_details_info key found in event")
 
-                    #if follow_links and type(event[self.event_info_key]) == dict:
+                    # if follow_links and type(event[self.event_info_key]) == dict:
                     if follow_links and isinstance(event[self.event_info_key], dict):
                         agenda = self.agenda(event[self.event_info_key]["url"])
                     else:

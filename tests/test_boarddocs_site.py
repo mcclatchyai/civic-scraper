@@ -1,6 +1,6 @@
 import pytest
 
-from civic_scraper.platforms.boarddocs.site import BoardDocsSite
+from civic_scraper.platforms.boarddocs.site import Site as BoardDocsSite
 
 
 @pytest.mark.vcr()
