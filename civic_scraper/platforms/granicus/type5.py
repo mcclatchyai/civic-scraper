@@ -1,9 +1,11 @@
 import logging
 import re
 from bs4 import BeautifulSoup
+from typing import Optional
 from .base import GranicusBaseScraper
 
 logger = logging.getLogger(__name__)
+
 
 class GranicusType5Scraper(GranicusBaseScraper):
     """
@@ -24,7 +26,7 @@ class GranicusType5Scraper(GranicusBaseScraper):
     # Use base class extract_and_process_meetings for transformation; only supply raw dicts via _extract_meeting_details_internal
 
     # --- Internal helpers ---
-    def _extract_meeting_details_internal(self, soup: BeautifulSoup, panel_name: str | None):
+    def _extract_meeting_details_internal(self, soup: BeautifulSoup, panel_name: Optional[str]):
         # Collect candidate tables (case-insensitive) for classes that often appear.
         candidate_class_patterns = [
             re.compile(r'listingtable2?', re.I),  # listingtable or listingtable2 (any case)
@@ -89,7 +91,7 @@ class GranicusType5Scraper(GranicusBaseScraper):
                         meeting_dict.setdefault('packet_url', href)
                     elif 'minutes' in text_l:
                         meeting_dict.setdefault('minutes_url', href)
-                    elif any(k in text_l for k in ['video','watch']) or 'mediaplayer.php' in href.lower():
+                    elif any(k in text_l for k in ['video', 'watch']) or 'mediaplayer.php' in href.lower():
                         meeting_dict.setdefault('video_url', href)
                     # meeting id source
                     id_match = re.search(r'[?&](?:clip_id|event_id|meeting_id|item_id)=(\d+)', href, re.I)
@@ -103,4 +105,3 @@ class GranicusType5Scraper(GranicusBaseScraper):
             logger.info(f"{self.__class__.__name__}: Table {idx+1} processed {processed_rows} data rows -> {len(meetings)} cumulative meetings.")
         logger.info(f"{self.__class__.__name__}: Extracted total {len(meetings)} meetings.")
         return meetings
-

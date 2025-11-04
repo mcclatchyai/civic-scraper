@@ -44,11 +44,11 @@ TEST_URLS = {
     },
     "type3_type5_fallback": {
         "url": "https://horrycounty.granicus.com/ViewPublisher.php?view_id=7",
-        "panel": ["County Council","Planning Commission","Public Safety Committee"]
+        "panel": ["County Council", "Planning Commission", "Public Safety Committee"]
     },
     "type4": {
         "url": "https://coralsprings.granicus.com/ViewPublisher.php?view_id=3",
-        "panel": ["Coral Springs City Commission","Development Review Committee"]
+        "panel": ["Coral Springs City Commission", "Development Review Committee"]
     },
     "type5": {
         "url": "https://sarasotacounty.granicus.com/ViewPublisher.php?view_id=51",
@@ -110,7 +110,7 @@ print("-"*60)
 site = GranicusSite(site_url, cache=Cache('/tmp/cache'), place=place, state_or_province=state, committee_names=committees)
 
 print("Starting scrape...")
-assets: AssetCollection=site.scrape(start_date = '2025-01-01')
+assets: AssetCollection = site.scrape(start_date='2025-01-01')
 print("-"*60)
 
 # Save assets to JSON

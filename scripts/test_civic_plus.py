@@ -8,20 +8,17 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')
 
 from civic_scraper.platforms.civic_plus.site import Site as CivicPlusSite  # noqa: E402
 
+
 # Custom JSON encoder to handle datetime objects
 class DateTimeEncoder(json.JSONEncoder):
-
-
     def default(self, obj):
-
-
         if isinstance(obj, datetime):
             return obj.isoformat()
         return super().default(obj)
 
+
 # Example CivicPlus URL
 civic_plus_url = "http://nc-nashcounty.civicplus.com/AgendaCenter"
-
 
 # civic_plus_url = "https://www.collegetownship.org/AgendaCenter"
 

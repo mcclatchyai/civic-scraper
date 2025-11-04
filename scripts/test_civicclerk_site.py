@@ -14,6 +14,7 @@ def islamorada_api_response():
     # Remove empty/invalid event dicts (some trailing objects are empty)
     return [event for event in data if event.get('meeting_id')]
 
+
 class DummyCivicClerkSite(CivicClerkSite):
 
 
@@ -21,9 +22,8 @@ class DummyCivicClerkSite(CivicClerkSite):
         # Override to return fixture data instead of making real API calls
         return self._test_events
 
+
 def test_extract_place_and_state_from_url():
-
-
     cases = [
         ("https://turlockca.portal.civicclerk.com", ("turlock", "ca")),
         ("https://jacksonmi.civicclerk.com", ("jackson", "mi")),
@@ -33,9 +33,8 @@ def test_extract_place_and_state_from_url():
     for url, expected in cases:
         assert extract_place_and_state_from_url(url) == expected
 
+
 def test_scrape_returns_assetcollection(islamorada_api_response):
-
-
     site = DummyCivicClerkSite(
         url="https://islamoradafl.portal.civicclerk.com/"
     )
@@ -60,8 +59,6 @@ def test_scrape_returns_assetcollection(islamorada_api_response):
 
 
 def test_scrape_empty():
-
-
     site = DummyCivicClerkSite(
         url="https://islamoradafl.portal.civicclerk.com/"
     )
@@ -72,17 +69,14 @@ def test_scrape_empty():
 
 
 def test_asset_url_and_meeting_url_methods():
-
-
     site = CivicClerkSite(url="https://islamoradafl.portal.civicclerk.com/")
     asset_url = site.standardise_asset_url("12345", 99)
     meeting_url = site.standardise_meeting_url("12345")
     assert asset_url.endswith("/event/12345/files/agenda/99")
     assert meeting_url.endswith("/event/12345/overview")
 
+
 def test_fetch_and_scrape_real_data():
-
-
     """
     Integration test: Fetch real data from the actual CivicClerk API and display first 5 assets (with key info).
     This test will make a real HTTP request. Use with caution (may fail if API changes).

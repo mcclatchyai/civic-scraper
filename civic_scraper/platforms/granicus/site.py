@@ -53,9 +53,6 @@ except ImportError:
         def set(self, key, value):
             pass  # Placeholder
 
-
-from urllib.parse import urlparse
-
 from .type1 import GranicusType1Scraper
 from .type2 import GranicusType2Scraper
 from .type3 import GranicusType3Scraper
@@ -117,8 +114,8 @@ class GranicusSite(BaseSite):
             {"instance": GranicusType1Scraper(cache=self.cache), "name": "GranicusType1Scraper"},
             {"instance": GranicusType2Scraper(cache=self.cache), "name": "GranicusType2Scraper"},
             {"instance": GranicusType4Scraper(cache=self.cache), "name": "GranicusType4Scraper"},
-            {"instance": GranicusType3Scraper(cache=self.cache), "name": "GranicusType3Scraper"}, # Type 3 is often general
-            {"instance": GranicusType5Scraper(cache=self.cache), "name": "GranicusType5Scraper"}, # New Type 5 single-page tables
+            {"instance": GranicusType3Scraper(cache=self.cache), "name": "GranicusType3Scraper"},  # Type 3 is often general
+            {"instance": GranicusType5Scraper(cache=self.cache), "name": "GranicusType5Scraper"},  # New Type 5 single-page tables
         ]
 
     def _detect_scraper_type(self, html_content: str) -> str:
@@ -132,7 +129,7 @@ class GranicusSite(BaseSite):
         import re
         import os
         from pathlib import Path
-        
+
         soup = BeautifulSoup(html_content, 'html.parser')
 
         debug_detection = os.getenv('GRANICUS_DEBUG_DETECTION', '').lower() in ('1', 'true', 'yes')
@@ -143,7 +140,7 @@ class GranicusSite(BaseSite):
             logger.info(f"[DETECT] Presence of TabbedPanels: {bool(soup.find('div', class_='TabbedPanels'))}")
             logger.info(f"[DETECT] Count listingTable: {len(soup.find_all('table', class_='listingTable'))}")
             logger.info(f"[DETECT] Count responsive-table lists: {len(soup.find_all(['ol','ul'], class_='responsive-table'))}")
-        
+
         # Check for CollapsiblePanelTab structure (Type 1, 2, 4)
         collapsible_panels = soup.find_all(
             "div", class_=["CollapsiblePanelTab", "CollapsiblePanelTabNotSelected"]
@@ -232,7 +229,7 @@ class GranicusSite(BaseSite):
                     continue
                 has_inner_tabbed = bool(content_div.find('div', class_='TabbedPanels'))
                 listing_table_inside = content_div.find('table', class_='listingTable')
-                responsive_list_inside = content_div.find(['ol','ul'], class_='responsive-table')
+                responsive_list_inside = content_div.find(['ol', 'ul'], class_='responsive-table')
                 # If responsive list but no inner TabbedPanels => Type 4 (single-year or no year tabs visible)
                 if responsive_list_inside and not has_inner_tabbed:
                     logger.info("✓ DETECTED TYPE 4 (heuristic): Found responsive-table list inside panel content without inner TabbedPanels")
@@ -241,7 +238,7 @@ class GranicusSite(BaseSite):
                 if listing_table_inside and not has_inner_tabbed:
                     logger.info("✓ DETECTED TYPE 2 (heuristic): Found listingTable inside panel content without inner TabbedPanels")
                     return "GranicusType2Scraper"
-        
+
         # Evaluate structures without collapsible panels
         main_tabbed_panels = soup.find('div', class_='TabbedPanels') or soup.find('div', id=re.compile(r'TabbedPanels?1', re.I))
         # Gather table variants once
@@ -468,7 +465,7 @@ class GranicusSite(BaseSite):
         logger.info(f"Granicus scrape for site '{site_description}' (Committees: {self.committee_names}) finished. Returning {len(final_assets_to_return)} assets.")
         # Optional: Try all scrapers if we got zero assets (env-controlled)
         import os
-        if len(final_assets_to_return) == 0 and os.getenv('GRANICUS_TRY_ALL_ON_EMPTY', '').lower() in ('1','true','yes'):
+        if len(final_assets_to_return) == 0 and os.getenv('GRANICUS_TRY_ALL_ON_EMPTY', '').lower() in ('1', 'true', 'yes'):
             logger.info("No assets from detected scraper; GRANICUS_TRY_ALL_ON_EMPTY=1 so attempting other scraper types as a fallback.")
             tried_names = {detected_scraper_name}
             for scraper_info in self.scraper_instances_with_info:

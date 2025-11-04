@@ -2,6 +2,7 @@ from bs4 import BeautifulSoup
 import re
 import html  # For unescaping HTML entities in URLs
 import logging
+from typing import Optional
 from .base import GranicusBaseScraper  # Assuming base.py is in the same directory
 
 logger = logging.getLogger(__name__)
@@ -16,7 +17,7 @@ class GranicusType1Scraper(GranicusBaseScraper):
     """
 
     def _extract_meeting_details_internal(
-        self, soup: BeautifulSoup, panel_name: str | None
+        self, soup: BeautifulSoup, panel_name: Optional[str]
     ) -> list[dict]:
         if not panel_name:
             logger.warning(
@@ -157,7 +158,7 @@ class GranicusType1Scraper(GranicusBaseScraper):
         )
         return meetings
 
-    def _extract_meeting_from_row(self, row_element, year_context: str) -> dict | None:
+    def _extract_meeting_from_row(self, row_element, year_context: str) -> Optional[dict]:
         """
         Helper to extract meeting details from a table row (<tr> element).
         'year_context' is the year from the tab, used for logging/context if needed.
@@ -191,7 +192,7 @@ class GranicusType1Scraper(GranicusBaseScraper):
                 meeting_data['suspected_column_shift'] = False
         else:
             meeting_data['suspected_column_shift'] = False
-        
+
         # Try to get a source for meeting_id (e.g. clip_id, event_id)
         meeting_id_source = ""
         all_links_in_row = row_element.find_all("a", href=True)
@@ -208,7 +209,7 @@ class GranicusType1Scraper(GranicusBaseScraper):
 
         # Link extraction: Agenda, Minutes, Video, Packet
         # This needs to be flexible as column order and link text vary.
-        
+
         # Decide starting index for asset columns. If a shift is suspected, assets begin at cell 1.
         # Normal layout: [0]=Name, [1]=Date, [2]=Agenda, [3]=Minutes, [4]=Video, [5]=Packet
         # Shifted layout: [0]=Date (stored as name), [1]=Agenda, [2]=Minutes, etc.

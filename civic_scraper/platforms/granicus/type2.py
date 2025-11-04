@@ -2,6 +2,7 @@ from bs4 import BeautifulSoup
 import re
 import html  # For unescaping HTML entities in URLs
 import logging
+from typing import Optional
 from .base import GranicusBaseScraper  # Assuming base.py is in the same directory
 
 logger = logging.getLogger(__name__)
@@ -18,7 +19,7 @@ class GranicusType2Scraper(GranicusBaseScraper):
     """
 
     def _extract_meeting_details_internal(
-        self, soup: BeautifulSoup, panel_name: str | None
+        self, soup: BeautifulSoup, panel_name: Optional[str]
     ) -> list[dict]:
         if not panel_name:
             logger.warning(

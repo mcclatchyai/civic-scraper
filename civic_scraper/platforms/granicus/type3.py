@@ -3,6 +3,7 @@ import re
 import html  # For unescaping HTML entities in URLs
 import logging
 from .base import GranicusBaseScraper  # Assuming base.py is in the same directory
+from typing import Optional
 
 logger = logging.getLogger(__name__)
 
@@ -19,7 +20,7 @@ class GranicusType3Scraper(GranicusBaseScraper):
     """
 
     def _extract_meeting_details_internal(
-        self, soup: BeautifulSoup, panel_name: str | None
+        self, soup: BeautifulSoup, panel_name: Optional[str]
     ) -> list[dict]:
         meetings = []
         seen_keys: set[tuple] = set()  # (clip_id/date/name) to avoid duplicates
@@ -30,7 +31,7 @@ class GranicusType3Scraper(GranicusBaseScraper):
         slash_date_pattern = re.compile(r'\b\d{1,2}/\d{1,2}/\d{2,4}\b')
         time_pattern = re.compile(r'\b\d{1,2}:\d{2}\s*(?:AM|PM|am|pm)?\b')
 
-        def extract_date_time_from_text(text: str) -> tuple[str | None, str | None]:
+        def extract_date_time_from_text(text: str) -> tuple[Optional[str], Optional[str]]:
             text_clean = text.replace('\xa0', ' ')
             date_match = long_date_pattern.search(text_clean)
             if not date_match:
@@ -40,7 +41,7 @@ class GranicusType3Scraper(GranicusBaseScraper):
             time_str = time_match.group(0) if time_match else None
             return date_str, time_str
 
-        def clean_name(raw_name: str, headers_tokens: list[str], date_str: str | None) -> str:
+        def clean_name(raw_name: str, headers_tokens: list[str], date_str: Optional[str]) -> str:
             if not raw_name:
                 return raw_name
             cleaned = raw_name.replace('\xa0', ' ').strip()
@@ -97,7 +98,6 @@ class GranicusType3Scraper(GranicusBaseScraper):
             chosen = candidate_texts[0] if candidate_texts else (date_str or '')
             return clean_name(chosen, headers_tokens, date_str)
 
-        
         # Look for a main TabbedPanel structure for years.
         # Common IDs/classes: TabbedPanel1, TabbedPanels1, or just class TabbedPanels
         year_tab_panel_container = soup.find(
@@ -194,7 +194,7 @@ class GranicusType3Scraper(GranicusBaseScraper):
             processed_any_rows_in_section = False
 
             # FIRST: Handle responsive list variant (Surfside style)
-            responsive_lists = content_section.find_all(['ol','ul'], class_=re.compile(r'responsive-table', re.I))
+            responsive_lists = content_section.find_all(['ol', 'ul'], class_=re.compile(r'responsive-table', re.I))
             for rlist in responsive_lists:
                 list_rows = rlist.find_all('li', class_=re.compile(r'table-row', re.I))
                 if not list_rows:
@@ -223,7 +223,7 @@ class GranicusType3Scraper(GranicusBaseScraper):
                     meeting_id_source = ''
                     all_links = li.find_all('a', href=True)
                     for a in all_links:
-                        href = a.get('href','')
+                        href = a.get('href', '')
                         m = re.search(r'[?&](?:clip_id)=(\d+)', href, re.I)
                         if m:
                             meeting_id_source = m.group(1)
