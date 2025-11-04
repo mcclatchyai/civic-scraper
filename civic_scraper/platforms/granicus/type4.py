@@ -1,7 +1,7 @@
 from bs4 import BeautifulSoup
 import re
 import logging
-from typing import Optional
+from typing import Optional, List, Dict
 from .base import GranicusBaseScraper  # Assuming base.py is in the same directory
 
 logger = logging.getLogger(__name__)
@@ -138,7 +138,7 @@ class GranicusType4Scraper(GranicusBaseScraper):
 
     def _extract_from_single_view_or_panel(
         self, soup_section: BeautifulSoup, panel_name: str, year_context: str
-    ) -> Optional(list[dict]):
+    ) -> Optional[List[Dict]]:
         """
         Extracts meetings for a specific panel_name from a given soup_section (can be whole page or a year's content div).
         Returns list of meetings if panel and its list are found, otherwise None if panel_name not found.
