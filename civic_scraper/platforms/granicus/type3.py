@@ -543,7 +543,7 @@ class GranicusType3Scraper(GranicusBaseScraper):
             ):  # If minutes is not specific
                 meeting_data["minutes_url"] = None
 
-    def _normalize_url_local(self, url: str) -> str | None:
+    def _normalize_url_local(self, url: str) -> Optional[str]:
         """
         Normalize URLs by ensuring they have a proper scheme, relative to the base_url.
         This is a local helper; the main _make_absolute_url is called during transformation.
