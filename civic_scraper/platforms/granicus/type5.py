@@ -80,6 +80,10 @@ class GranicusType5Scraper(GranicusBaseScraper):
                     'name': name_text,
                     'date': date_text,
                 }
+                # DEBUG
+                print(header_cells)
+                print(name_text)
+                print(date_text)
                 # Collect all links for this row
                 links = row.find_all('a', href=True)
                 for link in links:
