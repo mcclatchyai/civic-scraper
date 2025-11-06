@@ -351,6 +351,8 @@ class GranicusBaseScraper(ABC):
         site_timezone: Optional[str],
     ) -> AssetCollection:
         asset_collection = AssetCollection()
+        print(f"Site place: {site_place}")
+        print(f"Site state: {site_state}")
         site_identifier = (
             self._extract_site_name_internal(site_url)
             if not site_place
@@ -444,6 +446,7 @@ class GranicusBaseScraper(ABC):
                             asset_name=meeting_name_raw,
                             committee_name=committee_for_asset,
                             place=site_place,
+                            place_name=site_place,
                             state_or_province=site_state,
                             asset_type=asset_type_key,
                             meeting_date=final_meeting_datetime,
