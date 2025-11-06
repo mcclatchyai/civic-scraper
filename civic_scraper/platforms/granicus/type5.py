@@ -76,7 +76,9 @@ class GranicusType5Scraper(GranicusBaseScraper):
                 # Skip empty or decorative rows
                 if not name_text or not date_text:
                     continue
+                committee_element = soup.find("th", id="name")
                 meeting_dict = {
+                    "committee_name": committee_element.get_text(strip=True) if committee_element else panel_name,
                     'name': name_text,
                     'date': date_text,
                 }
