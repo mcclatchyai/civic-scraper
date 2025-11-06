@@ -80,10 +80,6 @@ class GranicusType5Scraper(GranicusBaseScraper):
                     'name': name_text,
                     'date': date_text,
                 }
-                # DEBUG
-                print(header_cells)
-                print(name_text)
-                print(date_text)
                 # Collect all links for this row
                 links = row.find_all('a', href=True)
                 for link in links:
@@ -108,4 +104,5 @@ class GranicusType5Scraper(GranicusBaseScraper):
                 meetings.append(meeting_dict)
             logger.info(f"{self.__class__.__name__}: Table {idx+1} processed {processed_rows} data rows -> {len(meetings)} cumulative meetings.")
         logger.info(f"{self.__class__.__name__}: Extracted total {len(meetings)} meetings.")
+        print(meetings)  # DEBUG
         return meetings
