@@ -76,6 +76,7 @@ class GranicusType5Scraper(GranicusBaseScraper):
                 # Skip empty or decorative rows
                 if not name_text or not date_text:
                     continue
+                
                 meeting_dict = {
                     'name': name_text,
                     'date': date_text,
@@ -104,4 +105,5 @@ class GranicusType5Scraper(GranicusBaseScraper):
                 meetings.append(meeting_dict)
             logger.info(f"{self.__class__.__name__}: Table {idx+1} processed {processed_rows} data rows -> {len(meetings)} cumulative meetings.")
         logger.info(f"{self.__class__.__name__}: Extracted total {len(meetings)} meetings.")
+        print(meetings)  # DEBUG
         return meetings

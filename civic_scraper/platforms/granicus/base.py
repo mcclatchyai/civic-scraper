@@ -444,6 +444,7 @@ class GranicusBaseScraper(ABC):
                             asset_name=meeting_name_raw,
                             committee_name=committee_for_asset,
                             place=site_place,
+                            place_name=site_place,
                             state_or_province=site_state,
                             asset_type=asset_type_key,
                             meeting_date=final_meeting_datetime,
