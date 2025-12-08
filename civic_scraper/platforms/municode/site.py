@@ -391,22 +391,23 @@ class MunicodeSite(base.Site):
         return assets
 
     def scrape(self, start_date=None, end_date=None):
+        url = self.url
         if is_new_pattern_url(url):
             # Use new logic
-            response = site.get_site_raw_data(url)
-            outer_html = site.get_particular_outer_html(response, "div", "view-content")
+            response = self.get_site_raw_data(url)
+            outer_html = self.get_particular_outer_html(response, "div", "view-content")
             if not outer_html:
                 print("No 'view-content' found, skipping.")
                 return None
-            meeting_data = site.parse_meetings(outer_html, base_url=url)
-            meeting_data = site.normalize_output_format(meeting_data)
+            meeting_data = self.parse_meetings(outer_html, base_url=url)
+            meeting_data = self.normalize_output_format(meeting_data)
             print(f"Found {len(meeting_data)} meetings (new style).")
             return meeting_data
         else:
             # Use classic logic
-            meeting_info = site.fetch_meeting_data(url)
+            meeting_info = self.fetch_meeting_data(url)
             print(f"Found {len(meeting_info)} meetings (classic style).")
-            assets = site.build_asset_data(meeting_info, place=site.place, state_or_province=site.state_or_province)
+            assets = self.build_asset_data(meeting_info, place=self.place, state_or_province=self.state_or_province)
             print(f"Extracted {len(assets)} assets.")
             return assets
 
