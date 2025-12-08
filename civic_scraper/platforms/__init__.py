@@ -16,6 +16,7 @@ from .legistar.site import Site as LegistarSite
 from .boarddocs.site import Site as BoardDocsSite
 
 # from .simbli.site import SimbliSite
+from .municode.site import MunicodeSite
 from .icompass.site import ICompassSite
 from .escribe.site import EscribeSite
 from .onbase.site import OnBaseSite
