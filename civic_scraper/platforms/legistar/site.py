@@ -27,7 +27,7 @@ class Site(base.Site):
         place=None,
         state_or_province=None,
         cache=None,
-        base_url,
+        # base_url,
         # Establish default keys described in the Legistar data table
         event_info_keys={
             "meeting_details_info": ["Meeting Details", "Agenda Materials"],
@@ -36,7 +36,7 @@ class Site(base.Site):
             "meeting_time_info": "Meeting Time",
             "meeting_location_info": "Meeting Location",
         },
-        cache=Cache(),
+        # cache=Cache(),
         parser_kls=None,
         committee_id=None,
         timezone=None,
