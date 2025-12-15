@@ -67,6 +67,9 @@ class MunicodeSite(base.Site):
 
     def get_site_raw_data(self):
         try:
+            headers = {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+            }
             response = requests.get(self.url, headers=HEADERS, timeout=10)
             response.raise_for_status()
             return response
@@ -533,7 +536,7 @@ class MunicodeSite(base.Site):
         url = self.url
         if is_new_pattern_url(url):
             # Use new logic
-            response = self.get_site_raw_data(url)
+            response = self.get_site_raw_data()
             outer_html = self.get_particular_outer_html(response, "div", "view-content")
             if not outer_html:
                 print("No 'view-content' found, skipping.")
@@ -542,10 +545,14 @@ class MunicodeSite(base.Site):
             meeting_data = self.normalize_output_format(meeting_data)
             print(f"Found {len(meeting_data)} meetings (new style).")
             return meeting_data
-        elif "lyndenwa.org" or "apexnc.org" in url:
+        elif "lyndenwa.org" or "apexnc.org" or "meridiancity.org" or "staridaho.org" in url:
             meeting_data=self.extract_meeting_data_for_lydia_apex(self.get_site_raw_data().text,url)
             meeting_data=self.normalize_output_format(meeting_data)
             return meeting_data
+        
+        
+        
+
 
         else:
             # Use classic logic
@@ -560,7 +567,7 @@ def is_new_pattern_url(url):
     # Add all new-style domains here
     new_domains = [
         "cityofannamaria.com",
-        "staridaho.org",
+        #"staridaho.org",
         "baystlouis-ms.gov",
         "cityoflivingston.org",
     ]
@@ -570,8 +577,13 @@ def is_new_pattern_url(url):
 # if __name__ == "__main__":
 #     test_urls = [
 #         # Classic Municode Meetings
+#         "https://www.cityofannamaria.com/AgendaCenter",
+#         #"https://www.staridaho.org/1305/Meetings-Agendas",
+#         #"https://www.folsom.ca.us/government/city-council-and-commissions/council-meetings-agendas-and-minutes",
+#         #"https://apps.meridiancity.org/CLERKSCONTENT/meridian_agenda_minutes.aspx#COUNCILAM",
 #         #"https://bluffton-sc.municodemeetings.com/",
-#         "https://www.apexnc.org/838/Agendas-Minutes",
+#         #"https://www.apexnc.org/838/Agendas-Minutes",
+#         # "https://www.lyndenwa.org/319/Council-Agendas-Minutes",
 #         # # "https://tumwater-wa.municodemeetings.com/",
 #         # # "https://columbus-ga.municodemeetings.com/",
 #         # # "https://hillsborough-nc.municodemeetings.com/",
@@ -585,31 +597,34 @@ def is_new_pattern_url(url):
 #         site = MunicodeSite(url)
 #         scrapped_meetings_info=site.scrape()
 #         print(scrapped_meetings_info)
-#         for i in scrapped_meetings_info:
-#             print("asset_name",i.asset_name,"\n meeting_date",i.meeting_date,"\n meeting_time",i.meeting_time,"\n meeting_id",i.meeting_id,"\n scraped_by",i.scraped_by,"\n url",i.url)
-#             print("="*50)
+#         if not scrapped_meetings_info:
+#             print("Got no data")
+#         else:
+#             for i in scrapped_meetings_info:
+#                 print("asset_name",i.asset_name,"\n meeting_date",i.meeting_date,"\n meeting_time",i.meeting_time,"\n meeting_id",i.meeting_id,"\n scraped_by",i.scraped_by,"\n url",i.url)
+#                 print("="*50)
 
-#         # if is_new_pattern_url(url):
-#         #     # Use new logic
-#         #     response = site.get_site_raw_data()
-#         #     outer_html = site.get_particular_outer_html(response, "div", "view-content")
-#         #     if not outer_html:
-#         #         print("No 'view-content' found, skipping.")
-#         #         continue
-#         #     meeting_data = site.parse_meetings(outer_html, base_url=url)
-#         #     meeting_data = site.normalize_output_format(meeting_data)
-#         #     print(f"Found {len(meeting_data)} meetings (new style).")
-#         #     for i in meeting_data:
-#         #         print(url,"-->working")
-#         #         print("Asset:", json.dumps(i, indent=4, default=str))
+# #         # if is_new_pattern_url(url):
+# #         #     # Use new logic
+# #         #     response = site.get_site_raw_data()
+# #         #     outer_html = site.get_particular_outer_html(response, "div", "view-content")
+# #         #     if not outer_html:
+# #         #         print("No 'view-content' found, skipping.")
+# #         #         continue
+# #         #     meeting_data = site.parse_meetings(outer_html, base_url=url)
+# #         #     meeting_data = site.normalize_output_format(meeting_data)
+# #         #     print(f"Found {len(meeting_data)} meetings (new style).")
+# #         #     for i in meeting_data:
+# #         #         print(url,"-->working")
+# #         #         print("Asset:", json.dumps(i, indent=4, default=str))
                 
-#         # else:
-#         #     # Use classic logic
-#         #     meeting_info = site.fetch_meeting_data(url)
-#         #     print(f"Found {len(meeting_info)} meetings (classic style).")
-#         #     assets = site.build_asset_data(meeting_info, place=site.place, state_or_province=site.state_or_province)
-#         #     print(f"Extracted {len(assets)} assets.")
-#         #     if assets:
-#         #         for i in assets:
-#         #             print("Asset:", json.dumps(i, indent=4, default=str))
-#         #         print(url,"-->working")
+# #         # else:
+# #         #     # Use classic logic
+# #         #     meeting_info = site.fetch_meeting_data(url)
+# #         #     print(f"Found {len(meeting_info)} meetings (classic style).")
+# #         #     assets = site.build_asset_data(meeting_info, place=site.place, state_or_province=site.state_or_province)
+# #         #     print(f"Extracted {len(assets)} assets.")
+# #         #     if assets:
+# #         #         for i in assets:
+# #         #             print("Asset:", json.dumps(i, indent=4, default=str))
+# #         #         print(url,"-->working")
