@@ -155,16 +155,15 @@ class ICompassSite(base.Site):
 
                 meeting_id = f"icompass-{self.place}-{m['meeting_id']}"
                 # filter by date if provided
+                # Since meeting IDs are indexed chronologically (higher ID = more recent),
+                # we can stop early once we hit a meeting before start_date
                 if meeting_date:
                     if start_date_obj and meeting_date < start_date_obj:
-                        print(
-                            f"[INFO] Skipping meeting {meeting_id} before start_date {start_date}"
-                        )
-                        continue
+                        print(f"[INFO] Meeting {meeting_id} is before start_date {start_date}. "
+                              f"Stopping scrape for committee '{name}' (remaining meetings are older).")
+                        break
                     if end_date_obj and meeting_date > end_date_obj:
-                        print(
-                            f"[INFO] Skipping meeting {meeting_id} after end_date {end_date}"
-                        )
+                        print(f"[INFO] Skipping meeting {meeting_id} after end_date {end_date}")
                         continue
 
                 asset = Asset(

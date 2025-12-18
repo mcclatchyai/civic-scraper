@@ -224,7 +224,9 @@ class GranicusSite(BaseSite):
             # Additional heuristic (NEW): Even if the ordering test above failed, attempt to classify
             # by inspecting each panel's content directly before giving up on structured detection.
             for panel in collapsible_panels:
-                content_div = panel.find_next_sibling('div', class_='CollapsiblePanelContent')
+                content_div = panel.find_next_sibling(
+                    "div", class_="CollapsiblePanelContent"
+                )
                 if not content_div:
                     continue
                 has_inner_tabbed = bool(content_div.find('div', class_='TabbedPanels'))
@@ -232,11 +234,15 @@ class GranicusSite(BaseSite):
                 responsive_list_inside = content_div.find(['ol', 'ul'], class_='responsive-table')
                 # If responsive list but no inner TabbedPanels => Type 4 (single-year or no year tabs visible)
                 if responsive_list_inside and not has_inner_tabbed:
-                    logger.info("✓ DETECTED TYPE 4 (heuristic): Found responsive-table list inside panel content without inner TabbedPanels")
+                    logger.info(
+                        "✓ DETECTED TYPE 4 (heuristic): Found responsive-table list inside panel content without inner TabbedPanels"
+                    )
                     return "GranicusType4Scraper"
                 # If listing table inside panel content without inner TabbedPanels => likely Type 2
                 if listing_table_inside and not has_inner_tabbed:
-                    logger.info("✓ DETECTED TYPE 2 (heuristic): Found listingTable inside panel content without inner TabbedPanels")
+                    logger.info(
+                        "✓ DETECTED TYPE 2 (heuristic): Found listingTable inside panel content without inner TabbedPanels"
+                    )
                     return "GranicusType2Scraper"
 
         # Evaluate structures without collapsible panels
@@ -265,20 +271,6 @@ class GranicusSite(BaseSite):
         )
         logger.warning("  Defaulting to Type 1 (most common)")
 
-        if debug_detection:
-            # Save HTML for offline inspection when detection failed
-            try:
-                out_dir = Path("debug_detection")
-                out_dir.mkdir(parents=True, exist_ok=True)
-                # Short hash for file uniqueness
-                import hashlib
-                digest = hashlib.sha1(html_content.encode('utf-8')).hexdigest()[:10]
-                out_file = out_dir / f"undetected_{digest}.html"
-                out_file.write_text(html_content, encoding='utf-8')
-                logger.info(f"[DETECT] Saved undetected HTML to {out_file}")
-            except Exception as e:
-                logger.error(f"[DETECT] Failed to write undetected HTML debug file: {e}")
-            logger.info("[DETECT][END] Fallback to Type1 after heuristics.")
         return "GranicusType1Scraper"
 
     def scrape(
