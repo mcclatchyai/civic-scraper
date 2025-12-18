@@ -13,7 +13,7 @@ import civic_scraper
 from civic_scraper import base
 from civic_scraper.base.asset import Asset, AssetCollection
 from civic_scraper.base.cache import Cache
-from civic_scraper.utils import parse_date, dtz_to_dt, mb_to_bytes, today_local_str
+from civic_scraper.utils import parse_date, dtz_to_dt, today_local_str
 
 logger = logging.getLogger(__name__)
 
@@ -24,14 +24,13 @@ class Site(base.Site):
     def __init__(
         self,
         url,
+        base_url,
         place=None,
         state_or_province=None,
-        cache=None,
-        # base_url,
         # Establish default keys described in the Legistar data table
         event_info_keys={
             "meeting_details_info": ["Meeting Details", "Agenda Materials"],
-            # "meeting_details_info": "Meeting Details", # Also: "Agenda Materials"
+            # "meeting_details_info": "Meeting Details", # Also: "Agenda Materials"x
             "meeting_date_info": "Meeting Date",
             "meeting_time_info": "Meeting Time",
             "meeting_location_info": "Meeting Location",

@@ -7,11 +7,11 @@ from datetime import datetime, time as dt_time  # Added dt_time for meeting_time
 from urllib.parse import (
     urljoin,
     urlparse,
-    quote_plus,
-)  # Added quote_plus for filename sanitization
+)
 import os
 from abc import ABC, abstractmethod
 import logging
+from typing import Optional
 
 # Attempt to import from civic_scraper, with placeholders if not found (for standalone testing)
 try:
@@ -34,20 +34,18 @@ except ImportError:
     @dataclass
     class Asset:  # Placeholder matching the fields from user's asset.py
         url: str
-        asset_name: str = None  # Title of an asset. Ex:  City Council Regular Meeting
-        committee_name: str = None
-        place: str = (
-            None  # Lowercase with spaces and punctuation removed. Ex: menlopark
-        )
-        place_name: str = None  # Human-readable place name. Ex: Menlo Park
-        state_or_province: str = None
-        asset_type: str = None  # Ex: agenda
-        meeting_date: datetime = None  # Date of meeting
-        meeting_time: dt_time = None  # Time of meeting
-        meeting_id: str = None  # Unique meeting ID
-        scraped_by: str = None
-        content_type: str = None
-        content_length: str = None
+        asset_name: Optional[str]  # Title of an asset. Ex:  City Council Regular Meeting
+        committee_name: Optional[str]
+        place: Optional[str]  # Lowercase with spaces and punctuation removed. Ex: menlopark
+        place_name: Optional[str]  # Human-readable place name. Ex: Menlo Park
+        state_or_province: Optional[str]
+        asset_type: Optional[str]  # Ex: agenda
+        meeting_date: Optional[str]  # Date of meeting
+        meeting_time: Optional[str]  # Time of meeting
+        meeting_id: Optional[str]  # Unique meeting ID
+        scraped_by: Optional[str]
+        content_type: Optional[str]
+        content_length: Optional[str]
 
     class AssetCollection(list):  # Placeholder now correctly inherits from list
         def __init__(self, *args):
@@ -91,7 +89,7 @@ class GranicusBaseScraper(ABC):
     Abstract base class for scraping Granicus platforms.
     """
 
-    def __init__(self, cache: Cache | None = None):
+    def __init__(self, cache: Optional[Cache] = None):
         self.base_url = None
         self.cache = cache
 
@@ -112,7 +110,7 @@ class GranicusBaseScraper(ABC):
         max_len = 100
         return sanitized_name[:max_len] + ".html"
 
-    def _fetch_html(self, url: str) -> str | None:
+    def _fetch_html(self, url: str) -> Optional[str]:
         """
         Fetches HTML content from a specified URL.
         If a Cache object with a 'write' method is provided, it saves the fetched HTML string.
@@ -174,7 +172,7 @@ class GranicusBaseScraper(ABC):
         except IOError as e:
             logger.error(f"Failed to save direct debug HTML: {e}")
 
-    def _make_absolute_url(self, link_url: str | None) -> str | None:
+    def _make_absolute_url(self, link_url: str) -> Optional[str]:
         if not link_url or not self.base_url:
             return None
         if isinstance(link_url, str) and link_url.startswith(("http://", "https://")):
@@ -214,8 +212,8 @@ class GranicusBaseScraper(ABC):
         return name.lower()
 
     def _parse_date_time_to_objects(
-        self, date_str: str | None, time_str: str | None
-    ) -> tuple[datetime | None, dt_time | None]:
+        self, date_str: Optional[str], time_str: Optional[str]
+    ) -> tuple[Optional[datetime], Optional[dt_time]]:
         parsed_date_obj = None
         parsed_time_obj = None
 
@@ -347,10 +345,10 @@ class GranicusBaseScraper(ABC):
         self,
         extracted_items: list[dict],
         site_url: str,
-        site_place: str | None,
-        site_state: str | None,
-        site_committee_name: str | None,
-        site_timezone: str | None,
+        site_place: Optional[str],
+        site_state: Optional[str],
+        site_committee_name: Optional[str],
+        site_timezone: Optional[str],
     ) -> AssetCollection:
         asset_collection = AssetCollection()
         site_identifier = (
@@ -446,6 +444,7 @@ class GranicusBaseScraper(ABC):
                             asset_name=meeting_name_raw,
                             committee_name=committee_for_asset,
                             place=site_place,
+                            place_name=site_place,
                             state_or_province=site_state,
                             asset_type=asset_type_key,
                             meeting_date=final_meeting_datetime,
@@ -466,7 +465,7 @@ class GranicusBaseScraper(ABC):
 
     @abstractmethod
     def _extract_meeting_details_internal(
-        self, soup: BeautifulSoup, panel_name: str | None
+        self, soup: BeautifulSoup, panel_name: Optional[str]
     ) -> list[dict]:
         pass
 
@@ -474,10 +473,10 @@ class GranicusBaseScraper(ABC):
         self,
         html_content: str,
         site_url: str,
-        site_place: str | None,
-        site_state: str | None,
-        site_committee_name: str | None,
-        site_timezone: str | None,
+        site_place: Optional[str],
+        site_state: Optional[str],
+        site_committee_name: Optional[str],
+        site_timezone: Optional[str],
     ) -> AssetCollection:
         self.base_url = site_url
         soup = BeautifulSoup(html_content, "html.parser")

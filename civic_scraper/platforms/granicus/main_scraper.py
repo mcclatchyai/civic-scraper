@@ -1,20 +1,9 @@
 import logging
-import os
 import sys
-from datetime import datetime  # For testing date filtering if added
+from typing import Optional
 from civic_scraper.platforms.granicus.site import GranicusSite
-from civic_scraper.base.cache import Cache  # Assuming this is available
 from civic_scraper.base.asset import (
-    AssetCollection,
-    Asset,
-)  # For type hinting and inspection
-from civic_scraper.platforms.granicus.site import (
-    GranicusSite,
-)  # Tries to import from current dir
-from civic_scraper.base.cache import Cache
-from civic_scraper.base.asset import (
-    AssetCollection,
-    Asset,
+    AssetCollection
 )  # For type hinting and inspection
 
 
@@ -28,7 +17,7 @@ logger = logging.getLogger(__name__)
 
 
 def run_granicus_test_scrape(
-    url: str, panel_name: str | None = None, site_name_override: str | None = None
+    url: str, panel_name: Optional[str] = None, site_name_override: Optional[str] = None
 ):
     """
     Tests the GranicusSite scraper for a given URL and panel.
@@ -105,11 +94,11 @@ if __name__ == "__main__":
     # --- To run all tests: ---
     all_results = {}
     for test_case in test_configurations:
-        logger.info(f"\n===================================================")
+        logger.info("\n===================================================")
         logger.info(f"RUNNING TEST: {test_case['comment']}")
         assets = run_granicus_test_scrape(test_case["url"], test_case.get("panel"))
         all_results[test_case["comment"]] = assets
-        logger.info(f"===================================================\n")
+        logger.info("===================================================\n")
 
     # --- Example of how to run a single selected test: ---
     # selected_test = test_configurations[0] # Choose a test

@@ -1,17 +1,7 @@
-import html
-import re
-import json
 import logging
 import requests
-from datetime import datetime, date
-from pathlib import Path
-from urllib.parse import urlparse, urljoin, quote  # Added quote for URL encoding
+from datetime import datetime
 
-import lxml.html
-from bs4 import BeautifulSoup
-from requests import Session
-
-import civic_scraper
 from civic_scraper import base
 from civic_scraper.base.asset import Asset, AssetCollection
 from civic_scraper.base.cache import Cache

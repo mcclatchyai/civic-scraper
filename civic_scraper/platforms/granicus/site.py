@@ -1,5 +1,4 @@
 import logging
-import re
 from typing import Optional, List  # List for type hinting
 from datetime import datetime  # For date parsing if needed at this level
 
@@ -53,9 +52,6 @@ except ImportError:
 
         def set(self, key, value):
             pass  # Placeholder
-
-
-from urllib.parse import urlparse
 
 from .type1 import GranicusType1Scraper
 from .type2 import GranicusType2Scraper
@@ -115,26 +111,11 @@ class GranicusSite(BaseSite):
         self.committee_names = committee_names if committee_names is not None else []
         # Order can still be relevant if multiple scrapers of the same "category" (e.g. panel-specific) tie on asset count.
         self.scraper_instances_with_info = [
-            {
-                "instance": GranicusType1Scraper(cache=self.cache),
-                "name": "GranicusType1Scraper",
-            },
-            {
-                "instance": GranicusType2Scraper(cache=self.cache),
-                "name": "GranicusType2Scraper",
-            },
-            {
-                "instance": GranicusType4Scraper(cache=self.cache),
-                "name": "GranicusType4Scraper",
-            },
-            {
-                "instance": GranicusType3Scraper(cache=self.cache),
-                "name": "GranicusType3Scraper",
-            },  # Type 3 is often general
-            {
-                "instance": GranicusType5Scraper(cache=self.cache),
-                "name": "GranicusType5Scraper",
-            },  # New Type 5 single-page tables
+            {"instance": GranicusType1Scraper(cache=self.cache), "name": "GranicusType1Scraper"},
+            {"instance": GranicusType2Scraper(cache=self.cache), "name": "GranicusType2Scraper"},
+            {"instance": GranicusType4Scraper(cache=self.cache), "name": "GranicusType4Scraper"},
+            {"instance": GranicusType3Scraper(cache=self.cache), "name": "GranicusType3Scraper"},  # Type 3 is often general
+            {"instance": GranicusType5Scraper(cache=self.cache), "name": "GranicusType5Scraper"},  # New Type 5 single-page tables
         ]
 
     def _detect_scraper_type(self, html_content: str) -> str:
@@ -146,8 +127,19 @@ class GranicusSite(BaseSite):
         """
         from bs4 import BeautifulSoup
         import re
+        import os
+        from pathlib import Path
 
-        soup = BeautifulSoup(html_content, "html.parser")
+        soup = BeautifulSoup(html_content, 'html.parser')
+
+        debug_detection = os.getenv('GRANICUS_DEBUG_DETECTION', '').lower() in ('1', 'true', 'yes')
+        if debug_detection:
+            logger.info("[DETECT][START] Granicus detection debug enabled (env GRANICUS_DEBUG_DETECTION=1)")
+            logger.info(f"[DETECT] HTML length: {len(html_content):,} characters")
+            logger.info(f"[DETECT] Count <div.CollapsiblePanelTab*>: {len(soup.find_all('div', class_=['CollapsiblePanelTab', 'CollapsiblePanelTabNotSelected']))}")
+            logger.info(f"[DETECT] Presence of TabbedPanels: {bool(soup.find('div', class_='TabbedPanels'))}")
+            logger.info(f"[DETECT] Count listingTable: {len(soup.find_all('table', class_='listingTable'))}")
+            logger.info(f"[DETECT] Count responsive-table lists: {len(soup.find_all(['ol','ul'], class_='responsive-table'))}")
 
         # Check for CollapsiblePanelTab structure (Type 1, 2, 4)
         collapsible_panels = soup.find_all(
@@ -229,7 +221,7 @@ class GranicusSite(BaseSite):
                     except (AttributeError, ValueError):
                         pass
 
-            # Additional heuristic: Even if the ordering test above failed, attempt to classify
+            # Additional heuristic (NEW): Even if the ordering test above failed, attempt to classify
             # by inspecting each panel's content directly before giving up on structured detection.
             for panel in collapsible_panels:
                 content_div = panel.find_next_sibling(
@@ -237,12 +229,10 @@ class GranicusSite(BaseSite):
                 )
                 if not content_div:
                     continue
-                has_inner_tabbed = bool(content_div.find("div", class_="TabbedPanels"))
-                listing_table_inside = content_div.find("table", class_="listingTable")
-                responsive_list_inside = content_div.find(
-                    ["ol", "ul"], class_="responsive-table"
-                )
-                # If responsive list but no inner TabbedPanels => Type 4
+                has_inner_tabbed = bool(content_div.find('div', class_='TabbedPanels'))
+                listing_table_inside = content_div.find('table', class_='listingTable')
+                responsive_list_inside = content_div.find(['ol', 'ul'], class_='responsive-table')
+                # If responsive list but no inner TabbedPanels => Type 4 (single-year or no year tabs visible)
                 if responsive_list_inside and not has_inner_tabbed:
                     logger.info(
                         "✓ DETECTED TYPE 4 (heuristic): Found responsive-table list inside panel content without inner TabbedPanels"
@@ -256,35 +246,23 @@ class GranicusSite(BaseSite):
                     return "GranicusType2Scraper"
 
         # Evaluate structures without collapsible panels
-        main_tabbed_panels = soup.find("div", class_="TabbedPanels") or soup.find(
-            "div", id=re.compile(r"TabbedPanels?1", re.I)
-        )
+        main_tabbed_panels = soup.find('div', class_='TabbedPanels') or soup.find('div', id=re.compile(r'TabbedPanels?1', re.I))
         # Gather table variants once
-        listing_tables = soup.find_all("table", class_="listingTable")
-        if not listing_tables:
-            listing_tables = soup.find_all(
-                "table", class_=re.compile(r"listingtable2?", re.I)
-            )
-
+        listing_tables_case = soup.find_all('table', class_='listingTable')
+        if not listing_tables_case:
+            listing_tables_case = soup.find_all('table', class_=re.compile(r'listingtable2?', re.I))
         # Type5 precedence: no panels, no TabbedPanels, but listingtable-style tables present
-        if not collapsible_panels and not main_tabbed_panels and listing_tables:
-            logger.info(
-                f"✓ DETECTED TYPE 5: Found {len(listing_tables)} listingtable-style tables without panels or TabbedPanels"
-            )
+        if not collapsible_panels and not main_tabbed_panels and listing_tables_case:
+            logger.info(f"✓ DETECTED TYPE 5: Found {len(listing_tables_case)} listingtable-style tables without panels or TabbedPanels")
             return "GranicusType5Scraper"
-
         # Type3: no panels, but has TabbedPanels OR listing tables (direct year/tabless listing)
-        if not collapsible_panels and (main_tabbed_panels or listing_tables):
-            logger.info(
-                "✓ DETECTED TYPE 3: No CollapsiblePanelTab structure, has TabbedPanels/listingTable"
-            )
-            logger.info("  Structure: TabbedPanels (years) → listingTable (direct)")
+        if not collapsible_panels and (main_tabbed_panels or listing_tables_case):
+            logger.info("✓ DETECTED TYPE 3: No CollapsiblePanelTab structure, has TabbedPanels/listingTable")
+            logger.info("  Structure: TabbedPanels (years) → listingTable (direct) or direct tables")
             if main_tabbed_panels:
-                logger.info(
-                    f"  Found TabbedPanels: {main_tabbed_panels.get('id', 'no id')} class='{main_tabbed_panels.get('class', [])}'"
-                )
-            if listing_tables:
-                logger.info(f"  Found {len(listing_tables)} listingTable(s)")
+                logger.info(f"  Found TabbedPanels: {main_tabbed_panels.get('id', 'no id')} class='{main_tabbed_panels.get('class', [])}'")
+            if listing_tables_case:
+                logger.info(f"  Found {len(listing_tables_case)} listingTable(s)")
             return "GranicusType3Scraper"
 
         # Default fallback: try Type 1 first as it's most common
@@ -476,7 +454,37 @@ class GranicusSite(BaseSite):
         else:
             logger.info(f"No date filtering requested for site '{site_description}'.")
 
-        logger.info(
-            f"Granicus scrape for site '{site_description}' (Committees: {self.committee_names}) finished. Returning {len(final_assets_to_return)} assets."
-        )
+        logger.info(f"Granicus scrape for site '{site_description}' (Committees: {self.committee_names}) finished. Returning {len(final_assets_to_return)} assets.")
+        # Optional: Try all scrapers if we got zero assets (env-controlled)
+        import os
+        if len(final_assets_to_return) == 0 and os.getenv('GRANICUS_TRY_ALL_ON_EMPTY', '').lower() in ('1', 'true', 'yes'):
+            logger.info("No assets from detected scraper; GRANICUS_TRY_ALL_ON_EMPTY=1 so attempting other scraper types as a fallback.")
+            tried_names = {detected_scraper_name}
+            for scraper_info in self.scraper_instances_with_info:
+                if scraper_info['name'] in tried_names:
+                    continue
+                alt_instance = scraper_info['instance']
+                alt_name = scraper_info['name']
+                logger.info(f"[FALLBACK] Trying alternative scraper {alt_name}...")
+                alt_assets_all = AssetCollection()
+                for committee_name in committees_to_scrape:
+                    if alt_instance.requires_panel_name() and not committee_name:
+                        continue
+                    alt_assets = alt_instance.extract_and_process_meetings(
+                        html_content=initial_html_content,
+                        site_url=self.url,
+                        site_place=self.place,
+                        site_state=self.state_or_province,
+                        site_committee_name=committee_name,
+                        site_timezone=self.timezone
+                    )
+                    if alt_assets:
+                        alt_assets_all.extend(alt_assets)
+                if alt_assets_all:
+                    logger.info(f"[FALLBACK] {alt_name} produced {len(alt_assets_all)} assets. Using these results.")
+                    final_assets_to_return = alt_assets_all
+                    break
+                else:
+                    logger.info(f"[FALLBACK] {alt_name} produced 0 assets.")
+            logger.info(f"Fallback process complete. Returning {len(final_assets_to_return)} assets after trying alternates.")
         return final_assets_to_return

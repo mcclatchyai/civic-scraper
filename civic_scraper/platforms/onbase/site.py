@@ -2,7 +2,6 @@ import re
 import os
 import sys
 from datetime import datetime
-from pathlib import Path
 from urllib.parse import urljoin, urlparse
 
 import requests
@@ -11,10 +10,11 @@ from bs4 import BeautifulSoup
 # Ensure the parent civic_scraper package is importable
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '..')))
 
-import civic_scraper
-from civic_scraper import base
-from civic_scraper.base.asset import Asset, AssetCollection
-from civic_scraper.base.cache import Cache
+import civic_scraper  # noqa: E402
+from civic_scraper import base  # noqa: E402
+from civic_scraper.base.asset import Asset, AssetCollection  # noqa: E402
+from civic_scraper.base.cache import Cache  # noqa: E402
+
 
 class OnBaseSite(base.Site):
     """

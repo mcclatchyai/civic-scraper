@@ -1,21 +1,24 @@
 import sys
 import os
 from datetime import datetime, date, time
+import json
 
 # Add the parent directory to the Python path
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from civic_scraper.platforms.boarddocs.site import Site as BoardDocsSite
-import json
+from civic_scraper.platforms.boarddocs.site import Site as BoardDocsSite  # noqa: E402
+
 
 # Custom JSON encoder to handle date, datetime, and time objects
 class DateTimeEncoder(json.JSONEncoder):
+
     def default(self, obj):
         if isinstance(obj, (datetime, date)):
             return obj.isoformat()
         elif isinstance(obj, time):
             return obj.isoformat()
         return super(DateTimeEncoder, self).default(obj)
+
 
 boarddocs_url = "https://go.boarddocs.com/pa/stco/board.nsf/Public"
 scraper = BoardDocsSite(boarddocs_url)

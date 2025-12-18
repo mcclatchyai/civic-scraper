@@ -1,9 +1,6 @@
-import os
 import json
 import logging
 from datetime import datetime
-from typing import Dict, List, Optional
-from dataclasses import dataclass
 
 from civic_scraper.platforms.escribe.site import EscribeSite
 from civic_scraper.base.cache import Cache

@@ -1,8 +1,7 @@
 from bs4 import BeautifulSoup
 import re
-import html  # For unescaping HTML entities in URLs
 import logging
-from datetime import datetime  # For default year context if needed
+from typing import Optional, List, Dict
 from .base import GranicusBaseScraper  # Assuming base.py is in the same directory
 
 logger = logging.getLogger(__name__)
@@ -20,7 +19,7 @@ class GranicusType4Scraper(GranicusBaseScraper):
     """
 
     def _extract_meeting_details_internal(
-        self, soup: BeautifulSoup, panel_name: str | None
+        self, soup: BeautifulSoup, panel_name: Optional[str]
     ) -> list[dict]:
         if not panel_name:
             logger.warning(
@@ -139,7 +138,7 @@ class GranicusType4Scraper(GranicusBaseScraper):
 
     def _extract_from_single_view_or_panel(
         self, soup_section: BeautifulSoup, panel_name: str, year_context: str
-    ) -> list[dict] | None:
+    ) -> Optional[List[Dict]]:
         """
         Extracts meetings for a specific panel_name from a given soup_section (can be whole page or a year's content div).
         Returns list of meetings if panel and its list are found, otherwise None if panel_name not found.

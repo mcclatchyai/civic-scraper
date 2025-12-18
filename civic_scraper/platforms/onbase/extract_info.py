@@ -1,6 +1,6 @@
 from bs4 import BeautifulSoup
 import requests
-from urllib.parse import urljoin, urlparse
+from urllib.parse import urljoin
 import json
 
 HEADERS = {
@@ -16,19 +16,19 @@ HEADERS = {
         }
 
 
-
 def read_website_html(url):
     response = requests.get(url, headers=HEADERS)
     if response.status_code == 200:
         return response.text
-    else:   
+    else:
         return None
+
 
 def get_div_by_class(html_code, class_name):
     soup = BeautifulSoup(html_code, 'html.parser')
     div_tag = soup.find('div', id=class_name)
     if div_tag:
-        #print(div_tag)
+        # print(div_tag)
         return str(div_tag)
     else:
         print("Returning None")
@@ -60,6 +60,7 @@ def parse_meeting_rows(html, base_url):
         meetings.append(meeting)
     return meetings
 
+
 urls = [
     "https://agendaonline.mymanatee.org/OnBaseAgendaOnline/Meetings/Search?dropid=11&mtids=107&dropsv=01%2F01%2F2021%2000%3A00%3A00&dropev=01%2F01%2F2040%2000%3A00%3A00",
     "https://www.modestogov.com/749/City-Council-Agendas-Minutes",
@@ -70,12 +71,12 @@ urls = [
 ]
 
 
-raw_html=read_website_html(urls[4])
+raw_html = read_website_html(urls[4])
 if raw_html is not None:
-    outer_html=get_div_by_class(raw_html,class_name="meetings-list")
+    outer_html = get_div_by_class(raw_html, class_name="meetings-list")
     print(outer_html)
     if outer_html is not None:
-        meeting_info=parse_meeting_rows(outer_html,base_url=urls[0])
+        meeting_info = parse_meeting_rows(outer_html, base_url=urls[0])
     else:
         print("something went wrong")
 
@@ -83,11 +84,3 @@ if raw_html is not None:
 
 else:
     print("something went wrong")
-
-
-
-
-
-
-
-

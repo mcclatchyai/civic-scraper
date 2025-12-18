@@ -1,7 +1,6 @@
 import datetime
 import logging
 import re
-from pathlib import Path
 from urllib.parse import urljoin, urlparse
 import warnings
 
@@ -10,7 +9,6 @@ import requests
 import civic_scraper
 from civic_scraper import base
 from civic_scraper.base.asset import Asset, AssetCollection
-from civic_scraper.base.cache import Cache
 from civic_scraper.utils import today_local_str
 
 from .parser import Parser
@@ -53,7 +51,7 @@ class Site(base.Site):
             place = kwargs.pop("place_name")
 
         # Extract state and subdomain from URL
-        subdomain = urlparse(url).netloc.split(".")[0]
+        # subdomain = urlparse(url).netloc.split(".")[0]
         extracted_state = self._get_asset_metadata(r"(?<=//)\w{2}(?=-)", url)
         extracted_place = self._get_asset_metadata(r"(?<=-)\w+(?=\.)", url)
 

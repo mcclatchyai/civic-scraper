@@ -1,6 +1,4 @@
-import time
-import datetime
-from collections import deque
+# from collections import deque
 import esprima
 
 from .base import LegistarScraper  # Use local import to avoid stale dependencies
@@ -71,7 +69,7 @@ class LegistarEventsScraper(LegistarScraper):
         # we might revisit the same event. So, we keep track of
         # the last few events we've visited in order to
         # make sure we are not revisiting
-        scraped_events = deque([], maxlen=10)
+        # scraped_events = deque([], maxlen=10)
 
         current_year = self.now().year
 
@@ -114,7 +112,8 @@ class LegistarEventsScraper(LegistarScraper):
                     elif self.event_info_key not in event:
                         print("No valid meeting_details_info key found in event")
 
-                    if follow_links and type(event[self.event_info_key]) == dict:
+                    # if follow_links and type(event[self.event_info_key]) == dict:
+                    if follow_links and isinstance(event[self.event_info_key], dict):
                         agenda = self.agenda(event[self.event_info_key]["url"])
                     else:
                         agenda = None

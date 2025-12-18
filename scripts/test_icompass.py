@@ -1,7 +1,6 @@
 # load libraries for icompass-specific test
-from typing import Dict, List, Optional
-import json, os, logging
-from dataclasses import dataclass
+import json
+import logging
 from civic_scraper.platforms import ICompassSite
 from civic_scraper.base.cache import Cache
 from civic_scraper.base.asset import AssetCollection
@@ -64,7 +63,7 @@ print("-"*60)
 site = ICompassSite(site_url, cache=Cache('/tmp/cache'), place=place, state_or_province=state, committee_names=committees)
 
 print("Starting scrape...")
-assets: AssetCollection = site.scrape(start_date = '2024-01-01')
+assets: AssetCollection = site.scrape(start_date='2024-01-01')
 print("-"*60)
 
 # Save assets to JSON
