@@ -38,8 +38,8 @@ TEST_URLS = {
 SELECTED_TEST = "site4"         # Options: site1, site2, site3, site4
 
 # Define the date range for scraping
-start_date= '2025-01-01'
-end_date= '2025-12-31'
+start_date = '2025-01-01'
+end_date = '2025-12-31'
 
 ############################################################################
 test_config = TEST_URLS[SELECTED_TEST]
