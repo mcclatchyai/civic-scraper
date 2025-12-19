@@ -35,7 +35,7 @@ class Site(base.Site):
             "meeting_time_info": "Meeting Time",
             "meeting_location_info": "Meeting Location",
         },
-        cache=Cache(),
+        # cache=Cache(),
         parser_kls=None,
         committee_id=None,
         timezone=None,

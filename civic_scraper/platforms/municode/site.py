@@ -570,8 +570,8 @@ def is_new_pattern_url(url):
     return any(domain in url for domain in new_domains)
 
 
-if __name__ == "__main__":
-    test_urls = [
+# if __name__ == "__main__":
+#     test_urls = [
         # Classic Municode Meetings
         #"https://www.cityofannamaria.com/AgendaCenter",
         #"https://www.staridaho.org/1305/Meetings-Agendas",
@@ -581,25 +581,25 @@ if __name__ == "__main__":
         #"https://www.apexnc.org/838/Agendas-Minutes",
         #"https://www.lyndenwa.org/319/Council-Agendas-Minutes",
         #"https://tumwater-wa.municodemeetings.com/",
-        "https://apps.meridiancity.org/CLERKSCONTENT/meridian_agenda_minutes.aspx#PLANZONEAM"
+        #"https://apps.meridiancity.org/CLERKSCONTENT/meridian_agenda_minutes.aspx#PLANZONEAM"
         #"https://columbus-ga.municodemeetings.com/",
         #"https://hillsborough-nc.municodemeetings.com/",
         # #"https://www.cityofannamaria.com/meetings?field_smart_date_value_1=2025-04-01&field_smart_date_end_value=2025-07-01&combine=&boards-commissions=All",
         # "https://www.staridaho.org/meetings?date_filter%255Bvalue%255D%255Bmonth%255D=1&date_filter%255Bvalue%255D%255Bday%255D=1&date_filter%255Bvalue%255D%255Byear%255D=2022&date_filter_1%255Bvalue%255D%255Bmonth%255D=12&date_filter_1%255Bvalue%255D%255Bday%255D=31&date_filter_1%255Bvalue%255D%255Byear%25=",
         # "https://www.baystlouis-ms.gov/meetings?field_smart_date_value_1=2025-06-01&field_smart_date_end_value=&combine=&boards-commissions=All",
         # "https://www.cityoflivingston.org/meetings?field_smart_date_value_1=2025-06-01&field_smart_date_end_value=2025-07-30&combine=&department=All&boards-commissions=125",
-    ]
-    for url in test_urls:
-        print(f"\nTesting MunicodeSite for: {url}")
-        site = MunicodeSite(url)
-        scrapped_meetings_info=site.scrape()
-        print(scrapped_meetings_info)
-        if not scrapped_meetings_info:
-            print("Got no data")
-        else:
-            for i in scrapped_meetings_info:
-                print("asset_name",i.asset_name,"\n meeting_date",i.meeting_date,"\n meeting_time",i.meeting_time,"\n meeting_id",i.meeting_id,"\n scraped_by",i.scraped_by,"\n url",i.url)
-                print("="*50)
+    # ]
+    # for url in test_urls:
+    #     print(f"\nTesting MunicodeSite for: {url}")
+    #     site = MunicodeSite(url)
+    #     scrapped_meetings_info=site.scrape()
+    #     print(scrapped_meetings_info)
+    #     if not scrapped_meetings_info:
+    #         print("Got no data")
+    #     else:
+    #         for i in scrapped_meetings_info:
+    #             print("asset_name",i.asset_name,"\n meeting_date",i.meeting_date,"\n meeting_time",i.meeting_time,"\n meeting_id",i.meeting_id,"\n scraped_by",i.scraped_by,"\n url",i.url)
+    #             print("="*50)
 
 # #         # if is_new_pattern_url(url):
 # #         #     # Use new logic
