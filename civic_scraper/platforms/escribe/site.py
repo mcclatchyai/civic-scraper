@@ -263,12 +263,14 @@ class EscribeSite(BaseSite):
                 # Compose asset_name as 'Month date, year - committee_name'
                 asset_name = f"{asset_date_str} - {committee}"
                 doc_key = (doc_url, asset_name, asset_type)
+                # Format meeting_date as ISO date (YYYY-MM-DD) if parsed successfully
+                formatted_meeting_date = meeting_date_obj.strftime("%Y-%m-%d") if meeting_date_obj else meeting_date
                 if doc_url and doc_key not in seen_docs:
                     seen_docs.add(doc_key)
                     all_assets.append(Asset(
                         asset_name=asset_name,
                         url=doc_url,
-                        meeting_date=meeting_date,
+                        meeting_date=formatted_meeting_date,
                         committee_name=committee,
                         place=self.place,
                         place_name=place_name,

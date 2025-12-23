@@ -61,7 +61,7 @@ TEST_URLS = {
 }
 
 # Select which test to run
-SELECTED_TEST = "type3_pismo"  # Options: type1, type1_alt, type2, type3, type3_alt, type4
+SELECTED_TEST = "type2"  # Options: type1, type1_alt, type2, type3, type3_alt, type4
 
 # Get the selected test configuration
 if SELECTED_TEST not in TEST_URLS:
