@@ -192,6 +192,9 @@ class MunicodeSite(base.Site):
     def normalize_output_format(self, meetings_data):
         final_meet_list = []
         for i_meeting in meetings_data:
+            if "CANCEL" in i_meeting.get("title", "").upper():
+                logger.info(f"Skipping cancelled meeting: {i_meeting.get('title')}")
+                continue
             meeting_date = i_meeting.get("date_time")
             if meeting_date:
                 try:
@@ -218,8 +221,8 @@ class MunicodeSite(base.Site):
             content_length = None
             place = urlparse(website_url).netloc.lower().replace(".", "") if website_url else "unknown_place"
 
-            place_name = urlparse(website_url).netloc.split(".")[0].replace("-", " ").title() if website_url else "Unknown Place"
-            state_or_province = "us"  # Default to 'us' if not specified
+            place_name = self.place
+            state_or_province = self.state_or_province 
 
             # Use the helper function for each asset type
             if i_meeting.get("agenda_urls"):
@@ -554,7 +557,9 @@ class MunicodeSite(base.Site):
             # Use classic logic
             meeting_info = self.fetch_meeting_data(url)
             print(f"Found {len(meeting_info)} meetings (classic style).")
-            assets = self.build_asset_data(meeting_info, place=self.place, state_or_province=self.state_or_province)
+            assets = self.build_asset_data(meeting_info, 
+                                           place=self.place, 
+                                           state_or_province=self.state_or_province)
             print(f"Extracted {len(assets)} assets.")
             return assets
 
@@ -572,34 +577,34 @@ def is_new_pattern_url(url):
 
 # if __name__ == "__main__":
 #     test_urls = [
-        # Classic Municode Meetings
-        #"https://www.cityofannamaria.com/AgendaCenter",
-        #"https://www.staridaho.org/1305/Meetings-Agendas",
-        #"https://www.folsom.ca.us/government/city-council-and-commissions/council-meetings-agendas-and-minutes",
-        #"https://apps.meridiancity.org/CLERKSCONTENT/meridian_agenda_minutes.aspx#COUNCILAM",
-        #"https://bluffton-sc.municodemeetings.com/",
-        #"https://www.apexnc.org/838/Agendas-Minutes",
-        #"https://www.lyndenwa.org/319/Council-Agendas-Minutes",
-        #"https://tumwater-wa.municodemeetings.com/",
-        #"https://apps.meridiancity.org/CLERKSCONTENT/meridian_agenda_minutes.aspx#PLANZONEAM"
-        #"https://columbus-ga.municodemeetings.com/",
-        #"https://hillsborough-nc.municodemeetings.com/",
-        # #"https://www.cityofannamaria.com/meetings?field_smart_date_value_1=2025-04-01&field_smart_date_end_value=2025-07-01&combine=&boards-commissions=All",
-        # "https://www.staridaho.org/meetings?date_filter%255Bvalue%255D%255Bmonth%255D=1&date_filter%255Bvalue%255D%255Bday%255D=1&date_filter%255Bvalue%255D%255Byear%255D=2022&date_filter_1%255Bvalue%255D%255Bmonth%255D=12&date_filter_1%255Bvalue%255D%255Bday%255D=31&date_filter_1%255Bvalue%255D%255Byear%25=",
-        # "https://www.baystlouis-ms.gov/meetings?field_smart_date_value_1=2025-06-01&field_smart_date_end_value=&combine=&boards-commissions=All",
-        # "https://www.cityoflivingston.org/meetings?field_smart_date_value_1=2025-06-01&field_smart_date_end_value=2025-07-30&combine=&department=All&boards-commissions=125",
-    # ]
-    # for url in test_urls:
-    #     print(f"\nTesting MunicodeSite for: {url}")
-    #     site = MunicodeSite(url)
-    #     scrapped_meetings_info=site.scrape()
-    #     print(scrapped_meetings_info)
-    #     if not scrapped_meetings_info:
-    #         print("Got no data")
-    #     else:
-    #         for i in scrapped_meetings_info:
-    #             print("asset_name",i.asset_name,"\n meeting_date",i.meeting_date,"\n meeting_time",i.meeting_time,"\n meeting_id",i.meeting_id,"\n scraped_by",i.scraped_by,"\n url",i.url)
-    #             print("="*50)
+        
+
+  
+#         # "https://bluffton-sc.municodemeetings.com/",
+#         # "https://tumwater-wa.municodemeetings.com/",
+#         # "https://columbus-ga.municodemeetings.com/",
+#         # "https://hillsborough-nc.municodemeetings.com/",
+
+#         # "https://www.staridaho.org/1305/Meetings-Agendas",
+#         # "https://www.apexnc.org/838/Agendas-Minutes",
+#         # "https://www.lyndenwa.org/319/Council-Agendas-Minutes",
+#         # "https://apps.meridiancity.org/CLERKSCONTENT/meridian_agenda_minutes.aspx#COUNCILAM"
+#         # "https://apps.meridiancity.org/CLERKSCONTENT/meridian_agenda_minutes.aspx#PLANZONEAM"
+#         # 
+#         # #"https://www.cityofannamaria.com/meetings?field_smart_date_value_1=2025-04-01&field_smart_date_end_value=2025-07-01&combine=&boards-commissions=All",
+#         # "https://www.baystlouis-ms.gov/meetings?field_smart_date_value_1=2025-06-01&field_smart_date_end_value=&combine=&boards-commissions=All",
+#         ]
+#     for url in test_urls:
+#         print(f"\nTesting MunicodeSite for: {url}")
+#         site = MunicodeSite(url)
+#         scrapped_meetings_info=site.scrape()
+#         print(scrapped_meetings_info)
+#         if not scrapped_meetings_info:
+#             print("Got no data")
+#         else:
+#             for i in scrapped_meetings_info:
+#                 print("asset_name",i.asset_name,"\n meeting_date",i.meeting_date,"\n meeting_time",i.meeting_time,"\n meeting_id",i.meeting_id,"\n scraped_by",i.scraped_by,"\n url",i.url)
+#                 print("="*50)
 
 # #         # if is_new_pattern_url(url):
 # #         #     # Use new logic

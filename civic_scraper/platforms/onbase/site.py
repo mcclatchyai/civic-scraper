@@ -35,7 +35,7 @@ class OnBaseSite(base.Site):
             "Chrome/114.0.0.0 Safari/537.36"
         )
 
-    def scrape(self, download=True):
+    def scrape(self, start_date=None, end_date=None, download=True):
         ac = AssetCollection()
         raw_html = self._get_meetings_html()
         if not raw_html:
@@ -151,15 +151,29 @@ class OnBaseSite(base.Site):
 
 # if __name__ == "__main__":
 #     urls = [
-#         "https://agendaonline.mymanatee.org/OnBaseAgendaOnline/Meetings/Search?dropid=11&mtids=107&dropsv=01%2F01%2F2021%2000%3A00%3A00&dropev=01%2F01%2F2040%2000%3A00%3A00",
-#         "https://www.modestogov.com/749/City-Council-Agendas-Minutes",
-#         "https://meetings.cob.org/",
-#         "https://boccmeetings.jocogov.org/onbaseagendaonline",
-#         "https://agendaonline.mymanatee.org/OnBaseAgendaOnline/",
-#         "https://meetings.cityofwestsacramento.org/OnBaseAgendaOnline",
+#         #"https://agendaonline.mymanatee.org/OnBaseAgendaOnline/Meetings/Search?dropid=11&mtids=107&dropsv=01%2F01%2F2021%2000%3A00%3A00&dropev=01%2F01%2F2040%2000%3A00%3A00",
+#         #"https://www.modestogov.com/749/City-Council-Agendas-Minutes",
+#         #"https://meetings.cob.org/",
+#         # "https://boccmeetings.jocogov.org/onbaseagendaonline",
+#         # "https://agendaonline.mymanatee.org/OnBaseAgendaOnline/",
+#         #  "https://meetings.cityofwestsacramento.org/OnBaseAgendaOnline",
 #     ]
 #     import json
 #     for url in urls:
 #         site = OnBaseSite(url)
 #         ac = site.scrape()
-#         print(ac)
+#         for i in ac:
+#             print("meeting _id:",i.meeting_id)
+#             print("meeting_date:",i.meeting_date)
+#             print("meeting_time:",i.meeting_time)
+#             print("committee_name:",i.committee_name)
+#             print("url:",i.url)
+#             print("asset_name:",i.asset_name)
+#             print("place:",i.place)
+#             print("state_or_province:",i.state_or_province)
+#             print("asset_type:",i.asset_type)
+#             print("scraped_by:",i.scraped_by)
+#             print("content_type:",i.content_type)
+#             print("content_length:",i.content_length)
+#             print("*"*50)
+           
